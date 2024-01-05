@@ -1,0 +1,49 @@
+# STS
+.springBeans
+.spring-boot-starter.log
+sts4-cache/
+
+# Maven
+target/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# IntelliJ
+.idea/
+*.iws
+*.iml
+*.ipr
+*.iws
+*.jar
+
+# Logs
+log/
+logs/
+
+# Compiled class file
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Local configuration file (application properties file)
+src/main/resources/application-local.properties
+
+# Gradle
+.gradle/
+build/
+
+# Test Reports
+test-output/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
