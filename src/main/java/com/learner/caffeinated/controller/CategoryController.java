@@ -1,5 +1,7 @@
 package com.learner.caffeinated.controller;
 
+import com.learner.caffeinated.service.ICategoryService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.learner.caffeinated.dto.CategoryDto;
 import com.learner.caffeinated.entity.ServiceResponse;
-import com.learner.caffeinated.service.CategoryService;
+import com.learner.caffeinated.service.impl.CategoryService;
 
 @RestController
 @RequestMapping(value="/public/category")
+@AllArgsConstructor
 public class CategoryController {
-	@Autowired
-	private CategoryService categoryService;
-	
+	private ICategoryService categoryService;
+
 	@PostMapping
 	public ServiceResponse addCategory(@RequestBody CategoryDto category) throws Exception {
 		return categoryService.addNewCategory(category);

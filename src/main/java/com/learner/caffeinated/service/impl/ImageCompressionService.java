@@ -1,4 +1,4 @@
-package com.learner.caffeinated.service;
+package com.learner.caffeinated.service.impl;
 
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Service;

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.learner.caffeinated.entity.ServiceResponse;
 import com.learner.caffeinated.entity.User;
-import com.learner.caffeinated.service.AuthenticationService;
+import com.learner.caffeinated.service.impl.AuthenticationService;
 
 import lombok.extern.slf4j.Slf4j;
 

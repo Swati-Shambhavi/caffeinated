@@ -1,5 +1,7 @@
 package com.learner.caffeinated.controller;
 
+import com.learner.caffeinated.service.IProductService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -18,16 +20,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.learner.caffeinated.dto.ProductDto;
 import com.learner.caffeinated.entity.ServiceResponse;
-import com.learner.caffeinated.service.ProductService;
+import com.learner.caffeinated.service.impl.ProductService;
 import com.learner.caffeinated.util.ProductDtoConverter;
 import com.learner.caffeinated.validation.PostValidation;
 import com.learner.caffeinated.validation.PutValidation;
 
 @RestController
 @RequestMapping("/public/product")
+@AllArgsConstructor
 public class ProductController {
-	@Autowired
-	private ProductService productService;
+	private IProductService productService;
 
 	@GetMapping
 	public ServiceResponse getAllProducts() throws Exception {

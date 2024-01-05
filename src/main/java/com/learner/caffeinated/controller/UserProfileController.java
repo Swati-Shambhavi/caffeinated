@@ -1,5 +1,7 @@
 package com.learner.caffeinated.controller;
 
+import com.learner.caffeinated.service.IUserProfileService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.learner.caffeinated.entity.ServiceResponse;
 import com.learner.caffeinated.entity.User;
-import com.learner.caffeinated.service.UserProfileService;
+import com.learner.caffeinated.service.impl.UserProfileService;
 
 @RestController
 @RequestMapping("/private/user")
+@AllArgsConstructor
 public class UserProfileController {
-	@Autowired
-	private UserProfileService service;
+	private IUserProfileService service;
 	
 	@GetMapping("/{userId}")
 	private ServiceResponse getUserProfile(@PathVariable Integer userId) {

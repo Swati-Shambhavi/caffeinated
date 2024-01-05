@@ -1,4 +1,4 @@
-package com.learner.caffeinated.service;
+package com.learner.caffeinated.service.impl;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.learner.caffeinated.service.IAdminService;
 import com.learner.caffeinated.entity.Contact;
 import com.learner.caffeinated.entity.ServiceResponse;
 import com.learner.caffeinated.entity.User;
@@ -15,7 +16,7 @@ import com.learner.caffeinated.repo.UserRepository;
 import io.micrometer.common.util.StringUtils;
 
 @Service
-public class AdminService {
+public class AdminService implements IAdminService {
 	@Autowired
 	private ContactRepo contactRepo;
 	@Autowired

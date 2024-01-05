@@ -1,9 +1,10 @@
-package com.learner.caffeinated.service;
+package com.learner.caffeinated.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.learner.caffeinated.service.IUserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import com.learner.caffeinated.repo.UserRepository;
 import io.micrometer.common.util.StringUtils;
 
 @Service
-public class UserProfileService {
+public class UserProfileService implements IUserProfileService {
 	@Autowired
 	private UserRepository userRepo;
 	@Autowired

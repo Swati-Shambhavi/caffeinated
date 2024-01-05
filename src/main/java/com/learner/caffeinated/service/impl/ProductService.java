@@ -1,17 +1,15 @@
-package com.learner.caffeinated.service;
+package com.learner.caffeinated.service.impl;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.learner.caffeinated.service.IProductService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.learner.caffeinated.dto.ProductDto;
 import com.learner.caffeinated.entity.Category;
@@ -23,15 +21,13 @@ import com.learner.caffeinated.repo.ProductRepository;
 import io.micrometer.common.util.StringUtils;
 
 @Service
-public class ProductService {
-	@Autowired
+@AllArgsConstructor
+public class ProductService implements IProductService {
 	private ProductRepository productRepo;
-	@Autowired
 	private CategoryRepository categoryRepo;
-	@Autowired
 	private ImageCompressionService imageCompressionService;
 
-	public ServiceResponse getAllProducts() throws Exception {
+	public ServiceResponse getAllProducts() {
 		ServiceResponse response = ServiceResponse.builder().build();
 		List<Product> allProducts = productRepo.findAll();
 		response.setData(allProducts);
@@ -41,7 +37,7 @@ public class ProductService {
 	public ServiceResponse addNewProduct(ProductDto productDto) throws Exception {
 		ServiceResponse response = ServiceResponse.builder().build();
 		Optional<Category> category = categoryRepo.findById(productDto.getCategoryId());
-		if (!category.isPresent()) {
+		if (category.isEmpty()) {
 			throw new Exception("No category found with id:" + productDto.getCategoryId());
 		}
 		// Save the image to the static folder
@@ -73,7 +69,7 @@ public class ProductService {
 
 	public ServiceResponse getProduct(Integer productId) throws Exception {
 		Optional<Product> product = productRepo.findById(productId);
-		if (!product.isPresent()) {
+		if (product.isEmpty()) {
 			throw new Exception("No Product found with id:" + productId);
 		}
 		return ServiceResponse.builder().data(product.get()).build();
@@ -81,7 +77,7 @@ public class ProductService {
 
 	public ServiceResponse deleteProduct(Integer productId) throws Exception {
 		Optional<Product> product = productRepo.findById(productId);
-		if (!product.isPresent()) {
+		if (product.isEmpty()) {
 			throw new Exception("No category found with id:" + productId);
 		}
 		if (StringUtils.isNotBlank(product.get().getImagePath())) {
@@ -93,14 +89,14 @@ public class ProductService {
 
 	public ServiceResponse updateProduct(Integer productId, ProductDto productDto) throws Exception {
 		Optional<Product> __product = productRepo.findById(productId);
-		if (!__product.isPresent()) {
+		if (__product.isEmpty()) {
 			throw new Exception("No category found with id:" + productId);
 		}
 		Product product = __product.get();
 		Category category = null;
 		if (productDto.getCategoryId() != null && productDto.getCategoryId() > 0) {
 			Optional<Category> _category = categoryRepo.findById(productDto.getCategoryId());
-			if (!_category.isPresent()) {
+			if (_category.isEmpty()) {
 				throw new Exception("No category found with id:" + productDto.getCategoryId());
 			}
 			category = _category.get();
@@ -156,7 +152,7 @@ public class ProductService {
 	            Files.delete(imageFilePath);
 	        } else {
 	            // Log or throw an exception if the file doesn't exist
-	            throw new IOException("Image file not found: " + imageFilePath.toString());
+	            throw new IOException("Image file not found: " + imageFilePath);
 	        }
 	    }
 }

@@ -1,5 +1,7 @@
 package com.learner.caffeinated.controller;
 
+import com.learner.caffeinated.service.IContactService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,16 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.learner.caffeinated.entity.Contact;
 import com.learner.caffeinated.entity.ServiceResponse;
-import com.learner.caffeinated.service.ContactService;
+import com.learner.caffeinated.service.impl.ContactService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
 @RequestMapping("/public/contact")
+@AllArgsConstructor
 public class ContactController {
-	@Autowired
-	private ContactService service;
+	private IContactService service;
 	
 	@GetMapping("/")
 	public ServiceResponse getAllContact() {
@@ -42,7 +44,7 @@ public class ContactController {
 	
 	@PutMapping("/{contactId}")
 	public ServiceResponse updateContact(@RequestBody Contact contact, @PathVariable String contactId) {
-		return service.updateConatct(contact, contactId);
+		return service.updateContact(contact, contactId);
 	}
 	
 	@DeleteMapping("/{contactId}")

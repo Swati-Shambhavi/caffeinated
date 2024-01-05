@@ -1,11 +1,12 @@
-package com.learner.caffeinated.service;
+package com.learner.caffeinated.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.learner.caffeinated.service.IContactService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.learner.caffeinated.entity.Contact;
@@ -13,13 +14,13 @@ import com.learner.caffeinated.entity.ServiceResponse;
 import com.learner.caffeinated.repo.ContactRepo;
 
 @Service
-public class ContactService {
-	@Autowired
+@AllArgsConstructor
+public class ContactService implements IContactService {
 	private ContactRepo repo;
 
 	public ServiceResponse saveContact(Contact contact) {
 		ServiceResponse response = ServiceResponse.builder().build();
-		Contact savedContact=null;
+		Contact savedContact;
 		try {
 			savedContact= repo.save(contact);
 		}catch(Exception e) {
@@ -29,19 +30,12 @@ public class ContactService {
 			response.setError(error);
 			return response;
 		}
-		
-		if(savedContact!=null) {
+
 			response.setData(savedContact);
-		}else {
-			Map<String, String> error = new HashMap<>();
-			error.put("errorCode", "60001");
-			error.put("errorMessage", "Error Saving Contact details");
-			response.setError(error);
-		}
 		return response;
 	}
 
-	public ServiceResponse updateConatct(Contact contact, String contactId) {
+	public ServiceResponse updateContact(Contact contact, String contactId) {
 		ServiceResponse response = ServiceResponse.builder().build();
 		Optional<Contact>contactInDB = repo.findById(Integer.parseInt(contactId));
 		if(contactInDB.isPresent()) {

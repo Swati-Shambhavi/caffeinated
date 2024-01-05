@@ -1,7 +1,9 @@
-package com.learner.caffeinated.service;
+package com.learner.caffeinated.service.impl;
 
 import java.util.Optional;
 
+import com.learner.caffeinated.service.ICategoryService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +13,11 @@ import com.learner.caffeinated.entity.ServiceResponse;
 import com.learner.caffeinated.repo.CategoryRepository;
 
 @Service
-public class CategoryService {
-	@Autowired
+@AllArgsConstructor
+public class CategoryService implements ICategoryService {
 	private CategoryRepository categoryRepository;
 
-	public ServiceResponse addNewCategory(CategoryDto categoryDto) throws Exception {
+	public ServiceResponse addNewCategory(CategoryDto categoryDto) {
 		ServiceResponse response = ServiceResponse.builder().build();
 		Category category = Category.builder().name(categoryDto.getCategoryName()).build();
 		response.setData(categoryRepository.save(category));

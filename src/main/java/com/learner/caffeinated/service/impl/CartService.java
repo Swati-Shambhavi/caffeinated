@@ -1,10 +1,11 @@
-package com.learner.caffeinated.service;
+package com.learner.caffeinated.service.impl;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.learner.caffeinated.service.ICartService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.learner.caffeinated.dto.CartItemDto;
@@ -13,7 +14,6 @@ import com.learner.caffeinated.entity.CartItem;
 import com.learner.caffeinated.entity.Product;
 import com.learner.caffeinated.entity.ServiceResponse;
 import com.learner.caffeinated.entity.User;
-import com.learner.caffeinated.repo.CartRepository;
 import com.learner.caffeinated.repo.ProductRepository;
 import com.learner.caffeinated.repo.UserRepository;
 
@@ -21,13 +21,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
-public class CartService {
-	@Autowired
+@AllArgsConstructor
+public class CartService implements ICartService {
 	private UserRepository userRepo;
-	@Autowired
 	private ProductRepository productRepo;
-	@Autowired
-	private CartRepository cartRepository;
 
 	public ServiceResponse getCartDetails(String userEmail) {
 		User user = userRepo.findByEmail(userEmail).get(0);
@@ -44,7 +41,7 @@ public class CartService {
 	@Transactional
 	public ServiceResponse addToCart(String userEmail, CartItemDto itemDto) throws Exception {
 		User user = userRepo.findByEmail(userEmail).get(0);
-		Cart cart = null;
+		Cart cart ;
 		if (user.getCart() == null) {
 			// Create a new Cart
 			// Add the cartItem to that cart
@@ -67,7 +64,7 @@ public class CartService {
 		
 		boolean productAlreadyExistsInCart = false;
 		for (CartItem cartItem : cart.getCartItems()) {
-			if (itemDto.getProductId() == cartItem.getProduct().getId()) {
+			if (itemDto.getProductId().equals(cartItem.getProduct().getId())) {
 				// If a particular product is already there in cart, just increase the quantity
 				// of that item
 				cartItem.setQuantity(cartItem.getQuantity() + itemDto.getQuantity());
@@ -91,9 +88,8 @@ public class CartService {
 		user.setCart(cart);
 		user = userRepo.save(user);
 
-		ServiceResponse response = ServiceResponse.builder().data(user.getCart().getCartItems()).build();
+		return ServiceResponse.builder().data(user.getCart().getCartItems()).build();
 
-		return response;
 	}
 
 	public ServiceResponse removeFromCart(String userEmail, Integer productId) throws Exception {
@@ -111,7 +107,7 @@ public class CartService {
 		boolean productNotInCart = true;
 		while(iterator.hasNext()) {
 			CartItem cartItem = iterator.next();
-			if(cartItem.getProduct().getId() == productId) {
+			if(cartItem.getProduct().getId().equals(productId)) {
 				productNotInCart = false;
 				totalCartPrice -= cartItem.getUnitPrice();
 				//Quantity of that product = 1 -> In that case remove the CartItem from the cart && update the totalCartPrice
