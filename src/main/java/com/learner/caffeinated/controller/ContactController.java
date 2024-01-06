@@ -32,7 +32,7 @@ public class ContactController {
 	}
 	
 	@GetMapping("/{contactId}")
-	public ServiceResponse getAllContact(@PathVariable Integer contactId) {
+	public ServiceResponse getContact(@PathVariable Integer contactId) {
 		return service.contactDetail(contactId);
 	}
 	
@@ -48,13 +48,14 @@ public class ContactController {
 	}
 	
 	@DeleteMapping("/{contactId}")
-	public ServiceResponse updateContact(@PathVariable Integer contactId) {
-		return service.deleteContact(contactId);
+	public ServiceResponse deleteContact(@PathVariable Integer contactId) {
+		boolean userAskedForDeletion = true;
+		return service.closeContact(contactId, userAskedForDeletion);
 	}
 	
 	@GetMapping("/close/{contactId}")
-	public ServiceResponse closeAContact(@PathVariable Integer contactId, SecurityContextHolder ctx) {
-		log.info("Logggng"+SecurityContextHolder.getContext().getAuthentication().toString());
-		return service.closeContact(contactId);
+	public ServiceResponse closeAContact(@PathVariable Integer contactId) {
+		boolean userAskedForDeletion = true;
+		return service.closeContact(contactId, userAskedForDeletion);
 	}
 }

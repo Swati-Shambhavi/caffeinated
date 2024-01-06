@@ -84,37 +84,24 @@ public class ContactService implements IContactService {
 		}
 	}
 
-	public ServiceResponse closeContact(Integer contactId) {
+	public ServiceResponse closeContact(Integer contactId, boolean userAskedForDeletion) {
 		ServiceResponse response = ServiceResponse.builder().build();
 		Optional<Contact>contactInDB = repo.findById(contactId);
 		if(contactInDB.isPresent()) {
 			Contact contact= contactInDB.get();
-			contact.setStatus("CLOSE");
+			if(userAskedForDeletion){
+				contact.setStatus("DELETE");
+			}else{
+				contact.setStatus("CLOSE");
+			}
 			response.setData(repo.save(contact));
-			return response;
 		}else {
 			Map<String, String> error = new HashMap<>();
 			error.put("errorCode", "60001");
 			error.put("errorMessage", "No matching Contact detail found for id:"+contactId);
 			response.setError(error);
-			return response;
 		}
-	}
-
-	public ServiceResponse deleteContact(Integer contactId) {
-		ServiceResponse response = ServiceResponse.builder().build();
-		Optional<Contact>contactInDB = repo.findById(contactId);
-		if(contactInDB.isPresent()) {
-			repo.delete(contactInDB.get());
-			response.setData("Successfully deleted your contact detail");
-			return response;
-		}else {
-			Map<String, String> error = new HashMap<>();
-			error.put("errorCode", "60001");
-			error.put("errorMessage", "No matching Contact detail found for id:"+contactId);
-			response.setError(error);
-			return response;
-		}
+		return response;
 	}
 
 }
