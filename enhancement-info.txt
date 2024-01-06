@@ -1,3 +1,4 @@
+This 
 1. Containerized my Spring Boot app:
 Used Google jib to dockerize it. 
 Useful commads:
@@ -6,3 +7,4 @@ ii> docker run -e DATABASE_URL=<db_url>\
            -e DATABASE_USERNAME=<db_username> \
            -e DATABASE_PASSWORD=<db_password> \
            -p 8080:8080 <image_name:tag>  --------->>>> To run the docker container, I have configured my app in such a way that I need to pass data soruce as environment variables.
+
