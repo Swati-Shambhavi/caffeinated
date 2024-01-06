@@ -55,7 +55,7 @@ public class ContactController {
 	
 	@GetMapping("/close/{contactId}")
 	public ServiceResponse closeAContact(@PathVariable Integer contactId) {
-		boolean userAskedForDeletion = true;
+		boolean userAskedForDeletion = false;
 		return service.closeContact(contactId, userAskedForDeletion);
 	}
 }
