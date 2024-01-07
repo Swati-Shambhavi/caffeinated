@@ -1,26 +1,38 @@
 package com.caffeinated.cartexpressoservice.service.impl;
-
-import com.caffeinated.cartexpressoservice.entity.User;
+import com.caffeinated.cartexpressoservice.entity.Cart;
+import com.caffeinated.cartexpressoservice.entity.CartItem;
+import com.caffeinated.cartexpressoservice.entity.Product;
 import com.caffeinated.cartexpressoservice.exception.ResourceNotFoundException;
+import com.caffeinated.cartexpressoservice.mapping.MapMeUp;
+import com.caffeinated.cartexpressoservice.model.CartItemRequest;
+import com.caffeinated.cartexpressoservice.model.ProductDto;
 import com.caffeinated.cartexpressoservice.model.ServiceResponse;
 import com.caffeinated.cartexpressoservice.model.UserDto;
+import com.caffeinated.cartexpressoservice.repo.CartRepository;
 import com.caffeinated.cartexpressoservice.service.ICartService;
 import com.caffeinated.cartexpressoservice.service.client.CaffeinatedPersonaFeignClient;
+import com.caffeinated.cartexpressoservice.service.client.ProductCraftsmanFeignClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class CartService implements ICartService {
 	private CaffeinatedPersonaFeignClient caffeinatedPersonaFeignClient;
+	private CartRepository cartRepo;
+	private ProductCraftsmanFeignClient productCraftsmanFeignClient;
 
-	public UserDto userDetailExternalServiceCall(String email)
+	private UserDto userDetailExternalServiceCall(String email)
 	{
 		ServiceResponse userDetail = caffeinatedPersonaFeignClient.getUserDetail(email);
-		UserDto userDto = null;
+		UserDto userDto;
 		if(userDetail.getData()==null){
 			throw new ResourceNotFoundException("User","email",email);
 		}else{
@@ -30,80 +42,89 @@ public class CartService implements ICartService {
 		}
 	}
 
-//	public ServiceResponse getCartDetails(String userEmail) {
-////		User user = userRepo.findByEmail(userEmail).get(0);
-//		//Call MS1 to get user detail
-//
-//		User user = null;
-//		ServiceResponse response = ServiceResponse.builder().build();
-//		if (user.getCart() == null) {
-//			response.setData("Your cart is empty.");
-//		} else {
-//			response.setData(user.getCart());
-//		}
-//
-//		return response;
-//	}
+	private ProductDto productDetailExternalServiceCall(Integer productId) throws Exception {
+		ServiceResponse productDetail = productCraftsmanFeignClient.getProduct(productId);
+		ProductDto productDto;
+		if(productDetail.getData()==null){
+			throw new ResourceNotFoundException("Product","productId",productId.toString());
+		}else{
+			ObjectMapper objectMapper = new ObjectMapper();
+			productDto = objectMapper.convertValue(productDetail.getData(), ProductDto.class);
+			return productDto;
+		}
+	}
 
-//	@Transactional
-//	public ServiceResponse addToCart(String userEmail, CartItemRequest itemDto) throws Exception {
-//		//Call MS1 to get user detail
-//		User user = null;
-////		User user = userRepo.findByEmail(userEmail).get(0);
-//		Cart cart ;
-//		if (user.getCart() == null) {
-//			// Create a new Cart
-//			// Add the cartItem to that cart
-//			cart = Cart.builder().user(user).totalPrice(0).cartItems(new HashSet<>()).build();
-//		} else {
-//			cart = user.getCart();
-//		}
+	public ServiceResponse getCartDetails(String email) {
+		Optional<Cart> cart = cartRepo.findByUserEmail(email);
+		ServiceResponse response = ServiceResponse.builder().build();
 //
-//		// Check if the product exists
-//		//Call MS2 to get product details
-//		Product product =null;
-////		Product product = productRepo.findById(itemDto.getProductId())
-////				.orElseThrow(() -> new EntityNotFoundException("Product not found with id:" + itemDto.getProductId()));
-//
-//		//Check the available stockQuantity of the Product
-//		if(itemDto.getQuantity() > product.getStockQuantity()) {
-//			if(product.getStockQuantity() == 0) {
-//				throw new Exception("This Product is out of stock at this moment!");
-//			}
-//			throw new Exception("Currently we have "+product.getStockQuantity()+" item(s) in the stock");
-//		}
-//
-//		boolean productAlreadyExistsInCart = false;
-//		for (CartItem cartItem : cart.getCartItems()) {
-//			if (itemDto.getProductId().equals(cartItem.getProduct().getId())) {
-//				// If a particular product is already there in cart, just increase the quantity
-//				// of that item
-//				cartItem.setQuantity(cartItem.getQuantity() + itemDto.getQuantity());
-//				productAlreadyExistsInCart = true;
-//				break;
-//			}
-//		}
-//		if (!productAlreadyExistsInCart) {
-//			CartItem newCartItem = CartItem.builder().cart(cart).product(product).quantity(itemDto.getQuantity())
-//					.unitPrice(product.getPrice()).build();
-////			newCartItem.setTotalPrice(newCartItem.getQuantity() * newCartItem.getUnitPrice());
-//			cart.getCartItems().add(newCartItem);
-//		}
-//		// Set total price for each cart item
-//		double totalCartPrice = 0;
-//		for (CartItem cartItem : cart.getCartItems()) {
-//			cartItem.setTotalPrice(cartItem.getUnitPrice() * cartItem.getQuantity());
-//			totalCartPrice += cartItem.getTotalPrice();
-//		}
-//		cart.setTotalPrice(totalCartPrice);
+		if (cart.isEmpty()) {
+			response.setData("Your cart is empty.");
+		} else {
+			response.setData(cart.get());
+		}
+		return response;
+	}
+
+	@Transactional
+	public ServiceResponse addToCart(String userEmail, CartItemRequest itemDto) throws Exception {
+//		Optional<Cart> _cart = cartRepo.findByUserEmail(userEmail);
+		UserDto userDto = userDetailExternalServiceCall(userEmail);
+		Cart cart;
+		if (userDto.getCart()==null) {
+			// Create a new Cart
+			// Add the cartItem to that cart
+			cart = Cart.builder().totalPrice(0).user(MapMeUp.toUserEntity(userDto)).cartItems(new HashSet<>()).build();
+		} else {
+			cart = MapMeUp.toCartEntity(userDto.getCart());
+		}
+
+
+		// Check if the product exists
+		//Call MS2 to get product details
+
+		ProductDto product = productDetailExternalServiceCall(itemDto.getProductId());
+
+		//Check the available stockQuantity of the Product
+		if(itemDto.getQuantity() > product.getStockQuantity()) {
+			if(product.getStockQuantity() == 0) {
+				throw new Exception("This Product is out of stock at this moment!");
+			}
+			throw new Exception("Currently we have "+product.getStockQuantity()+" item(s) in the stock");
+		}
+
+		boolean productAlreadyExistsInCart = false;
+		for (CartItem cartItem : cart.getCartItems()) {
+			if (itemDto.getProductId().equals(cartItem.getProduct().getId())) {
+				// If a particular product is already there in cart, just increase the quantity
+				// of that item
+				cartItem.setQuantity(cartItem.getQuantity() + itemDto.getQuantity());
+				productAlreadyExistsInCart = true;
+				break;
+			}
+		}
+		if (!productAlreadyExistsInCart) {
+			CartItem newCartItem = CartItem.builder().cart(cart).product(MapMeUp.toProductEntity(product)).quantity(itemDto.getQuantity())
+					.unitPrice(product.getPrice()).build();
+//			newCartItem.setTotalPrice(newCartItem.getQuantity() * newCartItem.getUnitPrice());
+			cart.getCartItems().add(newCartItem);
+		}
+		// Set total price for each cart item
+		double totalCartPrice = 0;
+		for (CartItem cartItem : cart.getCartItems()) {
+			cartItem.setTotalPrice(cartItem.getUnitPrice() * cartItem.getQuantity());
+			totalCartPrice += cartItem.getTotalPrice();
+		}
+		cart.setTotalPrice(totalCartPrice);
 //		user.setCart(cart);
-//		//Call MS1 to save user details ********************************************************
+		//Call MS1 to save user details ********************************************************
 //		user = userRepo.save(user);
-//
-//		return ServiceResponse.builder().data(user.getCart().getCartItems()).build();
-//
-//	}
-//
+
+		cartRepo.save(cart);
+		return ServiceResponse.builder().data(cart.getCartItems()).build();
+
+	}
+
 //	public ServiceResponse removeFromCart(String userEmail, Integer productId) throws Exception {
 //		User user = userRepo.findByEmail(userEmail).get(0);
 //		if (user.getCart() == null || user.getCart().getCartItems().isEmpty()) {

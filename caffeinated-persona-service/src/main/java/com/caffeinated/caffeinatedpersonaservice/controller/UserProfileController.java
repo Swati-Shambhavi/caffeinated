@@ -4,12 +4,7 @@ import com.caffeinated.caffeinatedpersonaservice.entity.User;
 import com.caffeinated.caffeinatedpersonaservice.model.ServiceResponse;
 import com.caffeinated.caffeinatedpersonaservice.service.IUserProfileService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,5 +20,10 @@ public class UserProfileController {
     @PutMapping("/{userId}")
     public ServiceResponse updateUserDetail(@RequestBody User user, @PathVariable Integer userId) {
         return service.updateProfile(user, userId);
+    }
+
+    @PostMapping("/register")
+    public ServiceResponse allUser(@RequestBody User user){
+        return service.registerUser(user);
     }
 }

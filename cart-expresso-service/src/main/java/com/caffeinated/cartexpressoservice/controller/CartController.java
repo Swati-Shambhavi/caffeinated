@@ -14,20 +14,16 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
 	private ICartService service;
 
-	@GetMapping("/test/{email}")
-	public UserDto testing(@PathVariable String email){
-		return service.userDetailExternalServiceCall(email);
+	@GetMapping("/{userId}")
+	public ServiceResponse getCartDetails(@PathVariable String userId) {
+//		return service.getCartDetails(CommonUtility.getCurrentUser());
+		return service.getCartDetails(userId);
 	}
-//	@GetMapping("/{userEmail}")
-//	public ServiceResponse getCartDetails(@PathVariable String userEmail) {
-////		return service.getCartDetails(CommonUtility.getCurrentUser());
-//		return service.getCartDetails(userEmail);
-//	}
 //
-//	@PostMapping("/{userEmail}")
-//	public ServiceResponse addToCart(@RequestBody CartItemRequest item, @PathVariable String userEmail) throws Exception {
-//		return service.addToCart(userEmail, item);
-//	}
+	@PostMapping("/{userEmail}")
+	public ServiceResponse addToCart(@RequestBody CartItemRequest item, @PathVariable String userEmail) throws Exception {
+		return service.addToCart(userEmail, item);
+	}
 //
 //	@DeleteMapping("/{userEmail}")
 //	public ServiceResponse removeFromCart(@RequestParam Integer productId, @PathVariable String userEmail) throws Exception {

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.caffeinated.caffeinatedpersonaservice.entity.Address;
+import com.caffeinated.caffeinatedpersonaservice.entity.Cart;
 import com.caffeinated.caffeinatedpersonaservice.entity.User;
 import com.caffeinated.caffeinatedpersonaservice.model.ServiceResponse;
 import com.caffeinated.caffeinatedpersonaservice.repo.UserRepository;
@@ -107,6 +108,23 @@ public class UserProfileService implements IUserProfileService {
 			return response;
 		}
 
+		return response;
+	}
+
+	@Override
+	public ServiceResponse registerUser(User user) {
+//		String encodedPassword = passwordEncoder.encode(user.getPassword());
+//		user.setPassword(encodedPassword);
+		user.setRole("ROLE_USER");
+		ServiceResponse response =ServiceResponse.builder().build();
+		try {
+			User userSaved = userRepo.save(user);
+			response.setData(userSaved);
+		}catch(Exception e) {
+			Map<String, String> error=new HashMap<>();
+			error.put("DB-ERROR", e.getMessage());
+			response.setError(error);
+		}
 		return response;
 	}
 

@@ -6,5 +6,6 @@ import com.caffeinated.caffeinatedpersonaservice.model.ServiceResponse;
 public interface IUserProfileService {
     ServiceResponse updateProfile(User user, Integer userId);
     ServiceResponse getUserProfile(String email);
+    ServiceResponse registerUser(User user);
 }
 
