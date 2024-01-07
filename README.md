@@ -42,13 +42,52 @@ Caffeinated is a sophisticated backend application designed to power a fictional
 8. **User and Admin Profile Updates:**
    - Users and administrators can conveniently update their profiles, ensuring accurate and relevant information.
 
+## Microservices Division
+
+Caffeinated has undergone a microservices transformation for improved scalability and maintainability. The following microservices now handle specific functionalities:
+
+### Caffeinated-Persona-Service
+
+**Controllers:**
+
+- AdminController
+- UserProfileController
+
+**Responsibilities:**
+
+- Admin tasks (give/retrieve admin access).
+- User profile updates.
+- CRUD operations on User, user's cart, and user's profile.
+
+### Product-Craftsman-Service
+
+**Controllers:**
+
+- ProductController
+- CategoryController
+
+**Responsibilities:**
+
+- CRUD operations on product details.
+- Product categorization.
+
+### Cart-Expresso-Service
+
+**Controllers:**
+
+- CartController
+- ContactController
+
+**Responsibilities:**
+
+- Manage shopping cart operations.
+- Handle user messages and admin responses.
+  **Fun Fact:**
+  - This microservice is affectionately named "Expresso" (with an 'x') because, much like a shot of espresso kicks up your energy, it's here to bring a shot of excitement to our e-commerce world. The name is a playful nod to the expressive nature of its contact endpoint. After all, where else can users passionately express themselves about their favorite caffeine-infused delights? So, take a sip, err, click, and let the expressive journey begin!
+
 ## Ongoing Enhancements
 
 Caffeinated is a dynamic project with ongoing enhancements to meet evolving requirements. Here are some upcoming features:
-
-- **Microservices Migration:**
-
-  - A future plan includes migrating this monolithic application to a microservices architecture for improved scalability and maintainability.
 
 - **OAuth2 for Authorization:**
 
