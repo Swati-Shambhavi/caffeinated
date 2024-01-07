@@ -1,0 +1,17 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: "cart-expresso-service"
+  profiles:
+    active: "default"
+  datasource:
+    url: 
+    password: 
+    username:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true

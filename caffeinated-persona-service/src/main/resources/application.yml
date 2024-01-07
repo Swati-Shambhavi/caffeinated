@@ -1,0 +1,17 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: "caffeinated-persona-service"
+  profiles:
+    active: "default"
+  datasource:
+    url: 
+    password: 
+    username: 
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true

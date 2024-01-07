@@ -1,0 +1,24 @@
+server:
+  servlet:
+    session:
+      timeout: 120
+  port: 8082
+
+spring:
+  application:
+    name: "product-craftsman-service"
+  profiles:
+    active: "default"
+  datasource:
+    url: 
+    password: 
+    username: 
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
