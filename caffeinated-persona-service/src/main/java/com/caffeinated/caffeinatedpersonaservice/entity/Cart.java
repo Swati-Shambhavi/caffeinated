@@ -3,6 +3,7 @@ package com.caffeinated.caffeinatedpersonaservice.entity;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -37,7 +38,7 @@ public class Cart extends BaseEntity {
 	@OneToOne
 	@JoinColumn(name = "user_id", nullable = false, unique = true)
 //	@JsonBackReference
-	@JsonIgnoreProperties
+	@JsonIgnore
 	private User user;
 
 	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -13,13 +13,16 @@ import com.caffeinated.cartexpressoservice.service.ICartService;
 import com.caffeinated.cartexpressoservice.service.client.CaffeinatedPersonaFeignClient;
 import com.caffeinated.cartexpressoservice.service.client.ProductCraftsmanFeignClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -74,7 +77,7 @@ public class CartService implements ICartService {
 		if (userDto.getCart()==null) {
 			// Create a new Cart
 			// Add the cartItem to that cart
-			cart = Cart.builder().totalPrice(0).user(MapMeUp.toUserEntity(userDto)).cartItems(new HashSet<>()).build();
+			cart = Cart.builder().totalPrice(0).user(MapMeUp.toUserEntity(userDto, false)).cartItems(new HashSet<>()).build();
 		} else {
 			cart = MapMeUp.toCartEntity(userDto.getCart(), userDto);
 		}
@@ -124,43 +127,46 @@ public class CartService implements ICartService {
 
 	}
 
-//	public ServiceResponse removeFromCart(String userEmail, Integer productId) throws Exception {
+	public ServiceResponse removeFromCart(String userEmail, Integer productId) throws Exception {
+		UserDto userDto = userDetailExternalServiceCall(userEmail);
 //		User user = userRepo.findByEmail(userEmail).get(0);
-//		if (user.getCart() == null || user.getCart().getCartItems().isEmpty()) {
-//			throw new EntityNotFoundException("Your cart is empty!");
-//		}
-//		// Check if the product exists
+		if (userDto.getCart() == null || userDto.getCart().getCartItems().isEmpty()) {
+			throw new EntityNotFoundException("Your cart is empty!");
+		}
+		// Check if the product exists
+		ProductDto product = productDetailExternalServiceCall(productId);
 //		productRepo.findById(productId)
 //				.orElseThrow(() -> new EntityNotFoundException("Product not found with id:" + productId));
-//		Cart cart = user.getCart();
-//		Set<CartItem> cartItems = cart.getCartItems();
-//		Iterator<CartItem> iterator = cartItems.iterator();
-//		double totalCartPrice = cart.getTotalPrice();
-//		boolean productNotInCart = true;
-//		while(iterator.hasNext()) {
-//			CartItem cartItem = iterator.next();
-//			if(cartItem.getProduct().getId().equals(productId)) {
-//				productNotInCart = false;
-//				totalCartPrice -= cartItem.getUnitPrice();
-//				//Quantity of that product = 1 -> In that case remove the CartItem from the cart && update the totalCartPrice
-//				if(cartItem.getQuantity() == 1) {
-//					iterator.remove();
-//				}
-//				//Quantity of that product > 1 -> Decrease the quantity of product && update the totalCartItemPrice && totalCartPrice
-//				else if(cartItem.getQuantity() > 1) {
-//					cartItem.setQuantity(cartItem.getQuantity() - 1);
-//					cartItem.setTotalPrice(cartItem.getTotalPrice() - cartItem.getUnitPrice());
-//				}
-//			}
-//		}
-//		if(productNotInCart) {
-//			throw new Exception("Couldn't find this product in your cart.");
-//		}
-//		cart.setCartItems(cartItems);
-//		cart.setTotalPrice(totalCartPrice);
+		Cart cart = MapMeUp.toCartEntity(userDto.getCart(), userDto);
+		Set<CartItem> cartItems = cart.getCartItems();
+		Iterator<CartItem> iterator = cartItems.iterator();
+		double totalCartPrice = cart.getTotalPrice();
+		boolean productNotInCart = true;
+		while(iterator.hasNext()) {
+			CartItem cartItem = iterator.next();
+			if(cartItem.getProduct().getId().equals(productId)) {
+				productNotInCart = false;
+				totalCartPrice -= cartItem.getUnitPrice();
+				//Quantity of that product = 1 -> In that case remove the CartItem from the cart && update the totalCartPrice
+				if(cartItem.getQuantity() == 1) {
+					iterator.remove();
+				}
+				//Quantity of that product > 1 -> Decrease the quantity of product && update the totalCartItemPrice && totalCartPrice
+				else if(cartItem.getQuantity() > 1) {
+					cartItem.setQuantity(cartItem.getQuantity() - 1);
+					cartItem.setTotalPrice(cartItem.getTotalPrice() - cartItem.getUnitPrice());
+				}
+			}
+		}
+		if(productNotInCart) {
+			throw new Exception("Couldn't find this product in your cart.");
+		}
+		cart.setCartItems(cartItems);
+		cart.setTotalPrice(totalCartPrice);
 //		user.setCart(cart);
 //		userRepo.save(user);
-//		return ServiceResponse.builder().data(user.getCart()).build();
-//	}
+		cartRepo.save(cart);
+		return ServiceResponse.builder().data(cart).build();
+	}
 
 }

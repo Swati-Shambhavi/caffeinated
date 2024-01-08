@@ -1,6 +1,7 @@
 package com.caffeinated.caffeinatedpersonaservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -36,7 +37,7 @@ public class CartItem {
 	@ManyToOne
 	@JoinColumn(name = "cart_id", nullable = false)
 //	@JsonBackReference
-	@JsonIgnoreProperties
+	@JsonIgnore
 	private Cart cart;
 
 	@ManyToOne

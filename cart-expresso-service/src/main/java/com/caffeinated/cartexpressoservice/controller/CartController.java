@@ -19,14 +19,14 @@ public class CartController {
 //		return service.getCartDetails(CommonUtility.getCurrentUser());
 		return service.getCartDetails(email);
 	}
-//
+
 	@PostMapping("/{userEmail}")
 	public ServiceResponse addToCart(@RequestBody CartItemRequest item, @PathVariable String userEmail) throws Exception {
 		return service.addToCart(userEmail, item);
 	}
-//
-//	@DeleteMapping("/{userEmail}")
-//	public ServiceResponse removeFromCart(@RequestParam Integer productId, @PathVariable String userEmail) throws Exception {
-//		return service.removeFromCart(userEmail, productId);
-//	}
+
+	@DeleteMapping("/{userEmail}")
+	public ServiceResponse removeFromCart(@RequestParam Integer productId, @PathVariable String userEmail) throws Exception {
+		return service.removeFromCart(userEmail, productId);
+	}
 }

@@ -24,11 +24,11 @@ public class MapMeUp {
                 .build();
     }
 
-    public static User toUserEntity(UserDto userDto) {
+    public static User toUserEntity(UserDto userDto, boolean isCartRequired) {
         return User.builder()
                 .id(userDto.getId())
                 .address(userDto.getAddress()!=null?toAddressEntity(userDto.getAddress()):null)
-//                .cart(userDto.getCart()!=null?toCartEntity(userDto.getCart(), userDto):null)
+                .cart(isCartRequired && userDto.getCart()!=null?toCartEntity(userDto.getCart(), userDto):null)
                 .email(userDto.getEmail())
                 .mobileNumber(userDto.getMobileNumber())
 //                .password(userDto.g)
@@ -44,7 +44,7 @@ public class MapMeUp {
                 .totalPrice(cartDto.getTotalPrice())
                 .build();
         userDto.setCart(cartDto);
-        cart.setUser(userDto!=null?MapMeUp.toUserEntity(userDto):null);
+        cart.setUser(userDto!=null?MapMeUp.toUserEntity(userDto, false):null);
         cart.setCartItems(cartDto.getCartItems()!=null?toCartItemsList(cartDto.getCartItems(), cart):null);
         return cart;
     }
