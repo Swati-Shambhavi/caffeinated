@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
 	private ICartService service;
 
-	@GetMapping("/{userId}")
-	public ServiceResponse getCartDetails(@PathVariable String userId) {
+	@GetMapping("/{email}")
+	public ServiceResponse getCartDetails(@PathVariable String email) {
 //		return service.getCartDetails(CommonUtility.getCurrentUser());
-		return service.getCartDetails(userId);
+		return service.getCartDetails(email);
 	}
 //
 	@PostMapping("/{userEmail}")

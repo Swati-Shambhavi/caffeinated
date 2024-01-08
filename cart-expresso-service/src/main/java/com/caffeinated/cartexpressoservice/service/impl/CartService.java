@@ -76,7 +76,7 @@ public class CartService implements ICartService {
 			// Add the cartItem to that cart
 			cart = Cart.builder().totalPrice(0).user(MapMeUp.toUserEntity(userDto)).cartItems(new HashSet<>()).build();
 		} else {
-			cart = MapMeUp.toCartEntity(userDto.getCart());
+			cart = MapMeUp.toCartEntity(userDto.getCart(), userDto);
 		}
 
 
@@ -106,7 +106,6 @@ public class CartService implements ICartService {
 		if (!productAlreadyExistsInCart) {
 			CartItem newCartItem = CartItem.builder().cart(cart).product(MapMeUp.toProductEntity(product)).quantity(itemDto.getQuantity())
 					.unitPrice(product.getPrice()).build();
-//			newCartItem.setTotalPrice(newCartItem.getQuantity() * newCartItem.getUnitPrice());
 			cart.getCartItems().add(newCartItem);
 		}
 		// Set total price for each cart item
@@ -121,7 +120,7 @@ public class CartService implements ICartService {
 //		user = userRepo.save(user);
 
 		cartRepo.save(cart);
-		return ServiceResponse.builder().data(cart.getCartItems()).build();
+		return ServiceResponse.builder().data(cart).build();
 
 	}
 

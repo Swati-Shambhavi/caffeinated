@@ -52,9 +52,6 @@ public class Product extends BaseEntity {
 	@JsonBackReference
 	private Category category;
 
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<CartItem> items = new HashSet<>();
-
 	@Column(name = "image_path")
 	private String imagePath;
 

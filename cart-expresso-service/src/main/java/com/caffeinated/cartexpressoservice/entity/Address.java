@@ -1,5 +1,8 @@
 package com.caffeinated.cartexpressoservice.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 
@@ -13,6 +16,9 @@ import lombok.Data;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Address extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
