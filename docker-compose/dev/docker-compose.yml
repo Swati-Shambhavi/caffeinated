@@ -1,0 +1,37 @@
+services:
+  caffeinated-persona-service:
+    image: 'swatishambhavi/caffeinated-persona-service:v2'
+    container_name: caffeinated-persona-service
+    ports:
+      - '8081:8081'
+    environment:
+      SPRING_APPLICATION_NAME: 'caffeinated-persona-service'
+      SPRING_DATASOURCE_URL: ${DB_URL}
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+  product-craftsman-service:
+    image: 'swatishambhavi/product-craftsman-service:v2'
+    container_name: product-craftsman-service
+    ports:
+      - '8082:8082'
+    environment:
+      SPRING_APPLICATION_NAME: 'product-craftsman-service'
+      SPRING_DATASOURCE_URL: 'jdbc:mysql://192.168.1.36:3306/caffeinated'
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+  cart-expresso-service:
+    image: 'swatishambhavi/cart-expresso-service:v2'
+    container_name: cart-expresso-service
+    ports:
+      - '8083:8083'
+    environment:
+      SPRING_APPLICATION_NAME: 'cart-expresso-service'
+      SPRING_DATASOURCE_URL: 'jdbc:mysql://192.168.1.36:3306/caffeinated'
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+networks:
+  ms:
+    driver: 'bridge'

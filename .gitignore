@@ -1,3 +1,6 @@
+# Ignore .env files in all subdirectories of docker-compose
+docker-compose/**/.env
+
 # STS
 .springBeans
 .spring-boot-starter.log
