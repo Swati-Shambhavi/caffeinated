@@ -5,8 +5,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "caffeinated-persona-service", url = "192.168.1.36:8081/api/users")
+@FeignClient(name = "caffeinated-persona-service")
 public interface CaffeinatedPersonaFeignClient {
-    @GetMapping("/{email}")
+    @GetMapping("/api/users/{email}")
     public ServiceResponse getUserDetail(@PathVariable String email);
 }

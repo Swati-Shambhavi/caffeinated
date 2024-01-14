@@ -34,6 +34,7 @@ public class CartService implements ICartService {
 
 	private UserDto userDetailExternalServiceCall(String email)
 	{
+		log.info("Calling User External Service");
 		ServiceResponse userDetail = caffeinatedPersonaFeignClient.getUserDetail(email);
 		UserDto userDto;
 		if(userDetail.getData()==null){
@@ -46,6 +47,7 @@ public class CartService implements ICartService {
 	}
 
 	private ProductDto productDetailExternalServiceCall(Integer productId) throws Exception {
+		log.info("Calling Product External Service");
 		ServiceResponse productDetail = productCraftsmanFeignClient.getProduct(productId);
 		ProductDto productDto;
 		if(productDetail.getData()==null){
