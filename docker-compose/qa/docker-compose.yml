@@ -1,6 +1,23 @@
 services:
+  eureka-server:
+    image: 'swatishambhavi/eureka-server:v3'
+    container_name: eureka-server
+    ports:
+      - '8070:8070'
+    healthcheck:
+      test: 'curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1'
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    environment:
+      SPRING_APPLICATION_NAME: 'eureka-server'
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
   caffeinated-persona-service:
-    image: 'swatishambhavi/caffeinated-persona-service:v2'
+    image: 'swatishambhavi/caffeinated-persona-service:v3'
     container_name: caffeinated-persona-service
     ports:
       - '8081:8081'
@@ -9,9 +26,10 @@ services:
       SPRING_DATASOURCE_URL: ${DB_URL}
     extends:
       file: common-config.yml
-      service: microservice-base-config
+      service: microservice-eureka-config
+
   product-craftsman-service:
-    image: 'swatishambhavi/product-craftsman-service:v2'
+    image: 'swatishambhavi/product-craftsman-service:v3'
     container_name: product-craftsman-service
     ports:
       - '8082:8082'
@@ -20,9 +38,10 @@ services:
       SPRING_DATASOURCE_URL: 'jdbc:mysql://192.168.1.36:3306/caffeinated'
     extends:
       file: common-config.yml
-      service: microservice-base-config
+      service: microservice-eureka-config
+
   cart-expresso-service:
-    image: 'swatishambhavi/cart-expresso-service:v2'
+    image: 'swatishambhavi/cart-expresso-service:v3'
     container_name: cart-expresso-service
     ports:
       - '8083:8083'
@@ -31,7 +50,7 @@ services:
       SPRING_DATASOURCE_URL: 'jdbc:mysql://192.168.1.36:3306/caffeinated'
     extends:
       file: common-config.yml
-      service: microservice-base-config
+      service: microservice-eureka-config
 networks:
   ms:
     driver: 'bridge'

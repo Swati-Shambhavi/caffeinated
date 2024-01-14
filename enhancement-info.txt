@@ -1,0 +1,2 @@
+1. Dockerized the Microservices
+2. Added Eureka Server for service registry and discovery
