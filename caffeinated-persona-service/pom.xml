@@ -87,7 +87,7 @@
 				<version>3.4.0</version> <!-- Use the latest version -->
 				<configuration>
 					<to>
-						<image>swatishambhavi/${project.artifactId}:v3</image>
+						<image>swatishambhavi/${project.artifactId}:v4</image>
 					</to>
 				</configuration>
 			</plugin>

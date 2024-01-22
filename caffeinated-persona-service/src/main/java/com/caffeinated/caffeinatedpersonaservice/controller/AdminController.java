@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/admins")
+@RequestMapping("/admin/api")
 public class AdminController {
 	private IAdminService service;
 

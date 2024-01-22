@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/carts")
+@RequestMapping("/carts/api")
 @AllArgsConstructor
 public class CartController {
 	private ICartService service;

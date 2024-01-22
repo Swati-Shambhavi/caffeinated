@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users/api")
 @AllArgsConstructor
 public class UserProfileController {
     private IUserProfileService service;
