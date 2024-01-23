@@ -2,6 +2,7 @@ package com.caffeinated.cartexpressoservice.service.impl;
 import com.caffeinated.cartexpressoservice.entity.Cart;
 import com.caffeinated.cartexpressoservice.entity.CartItem;
 import com.caffeinated.cartexpressoservice.entity.Product;
+import com.caffeinated.cartexpressoservice.exception.ExternalServiceException;
 import com.caffeinated.cartexpressoservice.exception.ResourceNotFoundException;
 import com.caffeinated.cartexpressoservice.mapping.MapMeUp;
 import com.caffeinated.cartexpressoservice.model.CartItemRequest;
@@ -37,7 +38,10 @@ public class CartService implements ICartService {
 		log.info("Calling User External Service");
 		ServiceResponse userDetail = caffeinatedPersonaFeignClient.getUserDetail(email);
 		UserDto userDto;
-		if(userDetail.getData()==null){
+		if(userDetail==null){
+			throw new ExternalServiceException("Error calling the User External Service");
+		}
+		else if(userDetail.getData()==null){
 			throw new ResourceNotFoundException("User","email",email);
 		}else{
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -50,7 +54,10 @@ public class CartService implements ICartService {
 		log.info("Calling Product External Service");
 		ServiceResponse productDetail = productCraftsmanFeignClient.getProduct(productId);
 		ProductDto productDto;
-		if(productDetail.getData()==null){
+		if(productDetail==null){
+			throw new ExternalServiceException("Error calling the Products External Service");
+		}
+		else if(productDetail.getData()==null){
 			throw new ResourceNotFoundException("Product","productId",productId.toString());
 		}else{
 			ObjectMapper objectMapper = new ObjectMapper();

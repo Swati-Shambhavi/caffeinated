@@ -5,8 +5,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "caffeinated-persona-service")
+@FeignClient(name = "caffeinated-persona-service", fallback = CaffeinatedPersonaFallback.class)
 public interface CaffeinatedPersonaFeignClient {
-    @GetMapping("/api/users/{email}")
+    @GetMapping("/users/api/{email}")
     ServiceResponse getUserDetail(@PathVariable String email);
 }
