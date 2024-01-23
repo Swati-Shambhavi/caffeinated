@@ -6,6 +6,7 @@ import com.caffeinated.productcraftsmanservice.service.IProductService;
 import com.caffeinated.productcraftsmanservice.validation.PostValidation;
 import com.caffeinated.productcraftsmanservice.validation.PutValidation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/products/api")
 @AllArgsConstructor
+@Slf4j
 public class ProductController {
 	private IProductService productService;
 
@@ -38,6 +40,7 @@ public class ProductController {
 
 	@GetMapping("/{productId}")
 	public ServiceResponse getProduct(@PathVariable Integer productId) throws Exception {
+		log.info("getProduct called for productId="+productId.toString());
 		return productService.getProduct(productId);
 	}
 
