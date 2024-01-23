@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "caffeinated-persona-service")
 public interface CaffeinatedPersonaFeignClient {
     @GetMapping("/api/users/{email}")
-    public ServiceResponse getUserDetail(@PathVariable String email);
+    ServiceResponse getUserDetail(@PathVariable String email);
 }
