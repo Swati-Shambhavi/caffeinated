@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class ProductCraftsmanService {
+public class ProductCraftsmanExternalService {
 
     private final ProductCraftsmanFeignClient productCraftsmanFeignClient;
 

@@ -1,7 +1,6 @@
 package com.caffeinated.cartexpressoservice.service.impl;
 import com.caffeinated.cartexpressoservice.entity.Cart;
 import com.caffeinated.cartexpressoservice.entity.CartItem;
-import com.caffeinated.cartexpressoservice.entity.Product;
 import com.caffeinated.cartexpressoservice.exception.ExternalServiceException;
 import com.caffeinated.cartexpressoservice.exception.ResourceNotFoundException;
 import com.caffeinated.cartexpressoservice.mapping.MapMeUp;
@@ -12,10 +11,9 @@ import com.caffeinated.cartexpressoservice.model.UserDto;
 import com.caffeinated.cartexpressoservice.repo.CartRepository;
 import com.caffeinated.cartexpressoservice.service.ICartService;
 import com.caffeinated.cartexpressoservice.service.client.CaffeinatedPersonaFeignClient;
-import com.caffeinated.cartexpressoservice.service.client.ProductCraftsmanFeignClient;
-import com.caffeinated.cartexpressoservice.service.externalservice.ProductCraftsmanService;
+import com.caffeinated.cartexpressoservice.service.externalservice.CaffeinatedPersonaExternalService;
+import com.caffeinated.cartexpressoservice.service.externalservice.ProductCraftsmanExternalService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -31,47 +29,11 @@ import java.util.Set;
 @AllArgsConstructor
 @Slf4j
 public class CartService implements ICartService {
-	private CaffeinatedPersonaFeignClient caffeinatedPersonaFeignClient;
 	private CartRepository cartRepo;
-	private ProductCraftsmanFeignClient productCraftsmanFeignClient;
-	private ProductCraftsmanService productCraftsmanService;
+	private ProductCraftsmanExternalService productExternalService;
+	private CaffeinatedPersonaExternalService userExternalService;
 
-	private UserDto userDetailExternalServiceCall(String email)
-	{
-		log.info("Calling User External Service");
-		ServiceResponse userDetail = caffeinatedPersonaFeignClient.getUserDetail(email);
-		UserDto userDto;
-		if(userDetail==null){
-			throw new ExternalServiceException("Error calling the User External Service");
-		}
-		else if(userDetail.getData()==null){
-			throw new ResourceNotFoundException("User","email",email);
-		}else{
-			ObjectMapper objectMapper = new ObjectMapper();
-			userDto = objectMapper.convertValue(userDetail.getData(), UserDto.class);
-			return userDto;
-		}
-	}
 
-	public ProductDto productDetailExternalServiceCall(Integer productId) throws Exception {
-		log.info("Calling Product External Service");
-		ServiceResponse productDetail = productCraftsmanFeignClient.getProduct(productId);
-		ProductDto productDto;
-		if(productDetail==null){
-			throw new ExternalServiceException("Error calling the Products External Service");
-		}
-		else if(productDetail.getData()==null){
-			throw new ResourceNotFoundException("Product","productId",productId.toString());
-		}else{
-			ObjectMapper objectMapper = new ObjectMapper();
-			productDto = objectMapper.convertValue(productDetail.getData(), ProductDto.class);
-			return productDto;
-		}
-	}
-	public ServiceResponse fallbackMethod(Integer productId, Throwable throwable) {
-		log.info("Retried calling the Product external Service");
-		return null;
-	}
 	public ServiceResponse getCartDetails(String email) {
 		Optional<Cart> cart = cartRepo.findByUserEmail(email);
 		ServiceResponse response = ServiceResponse.builder().build();
@@ -87,7 +49,7 @@ public class CartService implements ICartService {
 	@Transactional
 	public ServiceResponse addToCart(String userEmail, CartItemRequest itemDto) throws Exception {
 //		Optional<Cart> _cart = cartRepo.findByUserEmail(userEmail);
-		UserDto userDto = userDetailExternalServiceCall(userEmail);
+		UserDto userDto = userExternalService.getUser(userEmail);
 		Cart cart;
 		if (userDto.getCart()==null) {
 			// Create a new Cart
@@ -100,9 +62,7 @@ public class CartService implements ICartService {
 
 		// Check if the product exists
 		//Call MS2 to get product details
-
-//		ProductDto product = productDetailExternalServiceCall(itemDto.getProductId());
-		ProductDto product = productCraftsmanService.getProduct(itemDto.getProductId());
+		ProductDto product = productExternalService.getProduct(itemDto.getProductId());
 
 		//Check the available stockQuantity of the Product
 		if(itemDto.getQuantity() > product.getStockQuantity()) {
@@ -144,16 +104,12 @@ public class CartService implements ICartService {
 	}
 
 	public ServiceResponse removeFromCart(String userEmail, Integer productId) throws Exception {
-		UserDto userDto = userDetailExternalServiceCall(userEmail);
-//		User user = userRepo.findByEmail(userEmail).get(0);
+		UserDto userDto = userExternalService.getUser(userEmail);
 		if (userDto.getCart() == null || userDto.getCart().getCartItems().isEmpty()) {
 			throw new EntityNotFoundException("Your cart is empty!");
 		}
 		// Check if the product exists
-//		ProductDto product = productDetailExternalServiceCall(productId);
-		ProductDto product = productCraftsmanService.getProduct(productId);
-//		productRepo.findById(productId)
-//				.orElseThrow(() -> new EntityNotFoundException("Product not found with id:" + productId));
+		ProductDto product = productExternalService.getProduct(productId);
 		Cart cart = MapMeUp.toCartEntity(userDto.getCart(), userDto);
 		Set<CartItem> cartItems = cart.getCartItems();
 		Iterator<CartItem> iterator = cartItems.iterator();

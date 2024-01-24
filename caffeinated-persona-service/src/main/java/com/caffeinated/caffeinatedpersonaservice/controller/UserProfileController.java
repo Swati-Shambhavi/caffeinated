@@ -4,16 +4,19 @@ import com.caffeinated.caffeinatedpersonaservice.entity.User;
 import com.caffeinated.caffeinatedpersonaservice.model.ServiceResponse;
 import com.caffeinated.caffeinatedpersonaservice.service.IUserProfileService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users/api")
 @AllArgsConstructor
+@Slf4j
 public class UserProfileController {
     private IUserProfileService service;
 
     @GetMapping("/{email}")
     public ServiceResponse getUserDetail(@PathVariable String email) {
+        log.info("User Service called for email:"+email);
         return service.getUserProfile(email);
     }
 
