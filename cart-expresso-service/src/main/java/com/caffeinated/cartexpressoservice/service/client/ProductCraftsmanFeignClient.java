@@ -7,13 +7,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "product-craftsman-service")
+@FeignClient(name = "product-craftsman-service", fallback = ProductCraftsmanFallback.class)
 public interface ProductCraftsmanFeignClient {
-    @Retry(name="productCraftsmanRetry", fallbackMethod = "fallbackMethod")
     @GetMapping("/products/api/{productId}")
     ServiceResponse getProduct(@PathVariable Integer productId) throws Exception;
 
-    default ServiceResponse fallbackMethod(Integer productId, Throwable throwable) {
-        return null;
-    }
 }

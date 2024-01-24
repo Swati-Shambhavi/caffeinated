@@ -13,7 +13,9 @@ import com.caffeinated.cartexpressoservice.repo.CartRepository;
 import com.caffeinated.cartexpressoservice.service.ICartService;
 import com.caffeinated.cartexpressoservice.service.client.CaffeinatedPersonaFeignClient;
 import com.caffeinated.cartexpressoservice.service.client.ProductCraftsmanFeignClient;
+import com.caffeinated.cartexpressoservice.service.externalservice.ProductCraftsmanService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -32,6 +34,7 @@ public class CartService implements ICartService {
 	private CaffeinatedPersonaFeignClient caffeinatedPersonaFeignClient;
 	private CartRepository cartRepo;
 	private ProductCraftsmanFeignClient productCraftsmanFeignClient;
+	private ProductCraftsmanService productCraftsmanService;
 
 	private UserDto userDetailExternalServiceCall(String email)
 	{
@@ -50,7 +53,7 @@ public class CartService implements ICartService {
 		}
 	}
 
-	private ProductDto productDetailExternalServiceCall(Integer productId) throws Exception {
+	public ProductDto productDetailExternalServiceCall(Integer productId) throws Exception {
 		log.info("Calling Product External Service");
 		ServiceResponse productDetail = productCraftsmanFeignClient.getProduct(productId);
 		ProductDto productDto;
@@ -65,7 +68,10 @@ public class CartService implements ICartService {
 			return productDto;
 		}
 	}
-
+	public ServiceResponse fallbackMethod(Integer productId, Throwable throwable) {
+		log.info("Retried calling the Product external Service");
+		return null;
+	}
 	public ServiceResponse getCartDetails(String email) {
 		Optional<Cart> cart = cartRepo.findByUserEmail(email);
 		ServiceResponse response = ServiceResponse.builder().build();
@@ -95,7 +101,8 @@ public class CartService implements ICartService {
 		// Check if the product exists
 		//Call MS2 to get product details
 
-		ProductDto product = productDetailExternalServiceCall(itemDto.getProductId());
+//		ProductDto product = productDetailExternalServiceCall(itemDto.getProductId());
+		ProductDto product = productCraftsmanService.getProduct(itemDto.getProductId());
 
 		//Check the available stockQuantity of the Product
 		if(itemDto.getQuantity() > product.getStockQuantity()) {
@@ -143,7 +150,8 @@ public class CartService implements ICartService {
 			throw new EntityNotFoundException("Your cart is empty!");
 		}
 		// Check if the product exists
-		ProductDto product = productDetailExternalServiceCall(productId);
+//		ProductDto product = productDetailExternalServiceCall(productId);
+		ProductDto product = productCraftsmanService.getProduct(productId);
 //		productRepo.findById(productId)
 //				.orElseThrow(() -> new EntityNotFoundException("Product not found with id:" + productId));
 		Cart cart = MapMeUp.toCartEntity(userDto.getCart(), userDto);
