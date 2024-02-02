@@ -9,8 +9,9 @@ import java.util.Optional;
 
 import com.caffeinated.productcraftsmanservice.entity.Category;
 import com.caffeinated.productcraftsmanservice.entity.Product;
-import com.caffeinated.productcraftsmanservice.model.ProductRequest;
-import com.caffeinated.productcraftsmanservice.model.ServiceResponse;
+import com.caffeinated.productcraftsmanservice.dto.ProductRequest;
+import com.caffeinated.productcraftsmanservice.dto.ServiceResponse;
+import com.caffeinated.productcraftsmanservice.exception.ResourceNotFoundException;
 import com.caffeinated.productcraftsmanservice.repo.CategoryRepository;
 import com.caffeinated.productcraftsmanservice.repo.ProductRepository;
 import com.caffeinated.productcraftsmanservice.service.IProductService;
@@ -35,17 +36,21 @@ public class ProductService implements IProductService {
 		return response;
 	}
 
-	public ServiceResponse addNewProduct(ProductRequest productRequest) throws Exception {
+	public ServiceResponse addNewProduct(ProductRequest productRequest) {
 		ServiceResponse response = ServiceResponse.builder().build();
 		Optional<Category> category = categoryRepo.findById(productRequest.getCategoryId());
 		if (category.isEmpty()) {
-			throw new Exception("No category found with id:" + productRequest.getCategoryId());
+			throw new ResourceNotFoundException("No category found with id:" , "categoryId", productRequest.getCategoryId().toString());
 		}
 		// Save the image to the static folder
 		String imagePath = "images/" + productRequest.getImage().getOriginalFilename();
-		byte[] compressedImage = imageCompressionService.compressImage(productRequest.getImage(), 0.8f);
-		Files.write(Paths.get("src/main/resources/static/" + imagePath), compressedImage);
-//		
+		byte[] compressedImage = new byte[0];
+		try {
+			compressedImage = imageCompressionService.compressImage(productRequest.getImage(), 0.8f);
+			Files.write(Paths.get("src/main/resources/static/" + imagePath), compressedImage);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		Product product = mapProductDetails(productRequest, category.get());
 		product.setImagePath(imagePath);
@@ -68,21 +73,25 @@ public class ProductService implements IProductService {
 		return product;
 	}
 
-	public ServiceResponse getProduct(Integer productId) throws Exception {
+	public ServiceResponse getProduct(Integer productId) {
 		Optional<Product> product = productRepo.findById(productId);
 		if (product.isEmpty()) {
-			throw new Exception("No Product found with id:" + productId);
+			throw new ResourceNotFoundException("No Product found with id:", "productId",productId.toString());
 		}
 		return ServiceResponse.builder().data(product.get()).build();
 	}
 
-	public ServiceResponse deleteProduct(Integer productId) throws Exception {
+	public ServiceResponse deleteProduct(Integer productId)  {
 		Optional<Product> product = productRepo.findById(productId);
 		if (product.isEmpty()) {
-			throw new Exception("No category found with id:" + productId);
+			throw new ResourceNotFoundException("No Product found with id:", "productId",productId.toString());
 		}
 		if (StringUtils.isNotBlank(product.get().getImagePath())) {
-			deleteImage(product.get().getImagePath());
+			try {
+				deleteImage(product.get().getImagePath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		productRepo.delete(product.get());
 		return ServiceResponse.builder().data("Product deleted successfully!").build();

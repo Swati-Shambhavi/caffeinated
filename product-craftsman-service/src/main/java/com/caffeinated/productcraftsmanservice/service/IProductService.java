@@ -1,7 +1,7 @@
 package com.caffeinated.productcraftsmanservice.service;
 
-import com.caffeinated.productcraftsmanservice.model.ProductRequest;
-import com.caffeinated.productcraftsmanservice.model.ServiceResponse;
+import com.caffeinated.productcraftsmanservice.dto.ProductRequest;
+import com.caffeinated.productcraftsmanservice.dto.ServiceResponse;
 
 public interface IProductService {
      ServiceResponse getAllProducts() throws Exception;

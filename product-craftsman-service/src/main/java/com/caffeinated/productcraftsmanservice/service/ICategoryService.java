@@ -1,13 +1,13 @@
 package com.caffeinated.productcraftsmanservice.service;
 
-import com.caffeinated.productcraftsmanservice.model.CategoryRequest;
-import com.caffeinated.productcraftsmanservice.model.ServiceResponse;
+import com.caffeinated.productcraftsmanservice.dto.CategoryRequest;
+import com.caffeinated.productcraftsmanservice.dto.ServiceResponse;
 
 public interface ICategoryService {
 
     ServiceResponse addNewCategory(CategoryRequest categoryDto);
     ServiceResponse getAllCategories();
-    ServiceResponse getCategories(Integer categoryId) throws Exception;
-    ServiceResponse deleteCategory(Integer categoryId) throws Exception ;
-    ServiceResponse updateCategory(Integer categoryId, CategoryRequest categoryDto) throws Exception;
+    ServiceResponse getCategories(Integer categoryId) ;
+    ServiceResponse deleteCategory(Integer categoryId) ;
+    ServiceResponse updateCategory(Integer categoryId, CategoryRequest categoryDto);
     }

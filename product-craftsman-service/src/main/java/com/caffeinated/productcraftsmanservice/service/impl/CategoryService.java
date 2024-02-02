@@ -4,10 +4,12 @@ package com.caffeinated.productcraftsmanservice.service.impl;
 import java.util.Optional;
 
 import com.caffeinated.productcraftsmanservice.entity.Category;
-import com.caffeinated.productcraftsmanservice.model.CategoryRequest;
-import com.caffeinated.productcraftsmanservice.model.ServiceResponse;
+import com.caffeinated.productcraftsmanservice.exception.ResourceNotFoundException;
+import com.caffeinated.productcraftsmanservice.dto.CategoryRequest;
+import com.caffeinated.productcraftsmanservice.dto.ServiceResponse;
 import com.caffeinated.productcraftsmanservice.repo.CategoryRepository;
 import com.caffeinated.productcraftsmanservice.service.ICategoryService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,27 +32,27 @@ public class CategoryService implements ICategoryService {
         return response;
     }
 
-    public ServiceResponse getCategories(Integer categoryId) throws Exception {
+    public ServiceResponse getCategories(Integer categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if(category.isEmpty()) {
-            throw new Exception("No category found with id:"+categoryId);
+            throw new ResourceNotFoundException("No category found with id:","categoryId",categoryId.toString());
         }
         return ServiceResponse.builder().data(category.get()).build();
     }
 
-    public ServiceResponse deleteCategory(Integer categoryId) throws Exception {
+    public ServiceResponse deleteCategory(Integer categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if(category.isEmpty()) {
-            throw new Exception("No category found with id:"+categoryId);
+            throw new ResourceNotFoundException("No category found with id:","categoryId",categoryId.toString());
         }
         categoryRepository.delete(category.get());
         return ServiceResponse.builder().data("Category deleted successfully!").build();
     }
 
-    public ServiceResponse updateCategory(Integer categoryId, CategoryRequest categoryRequest) throws Exception {
+    public ServiceResponse updateCategory(Integer categoryId, CategoryRequest categoryRequest)  {
         Optional<Category> __category = categoryRepository.findById(categoryId);
         if(__category.isEmpty()) {
-            throw new Exception("No category found with id:"+categoryId);
+            throw new ResourceNotFoundException("No category found with id:","categoryId",categoryId.toString());
         }
         Category category=__category.get();
         category.setName(categoryRequest.getCategoryName());

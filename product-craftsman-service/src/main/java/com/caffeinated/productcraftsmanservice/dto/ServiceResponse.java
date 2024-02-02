@@ -1,4 +1,4 @@
-package com.caffeinated.productcraftsmanservice.model;
+package com.caffeinated.productcraftsmanservice.dto;
 
 import java.util.Map;
 
@@ -9,5 +9,5 @@ import lombok.Data;
 @Builder
 public class ServiceResponse {
 	private Object data;
-	private Map<String,String> error;
+	private Error error;
 }

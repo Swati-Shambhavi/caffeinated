@@ -1,7 +1,8 @@
-package com.caffeinated.productcraftsmanservice.model;
+package com.caffeinated.productcraftsmanservice.dto;
 import java.time.LocalDate;
 
 import com.caffeinated.productcraftsmanservice.validation.PostValidation;
+import jakarta.validation.constraints.Null;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.NotNull;
