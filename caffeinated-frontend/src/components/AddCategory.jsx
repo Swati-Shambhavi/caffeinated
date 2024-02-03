@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addCategory } from '../store/slices/categorySlice';
 
-const YourComponent = () => {
+const AddCategory = () => {
   const dispatch = useDispatch();
   const [categoryName, setCategoryName] = useState('');
 
@@ -29,4 +29,4 @@ const YourComponent = () => {
   );
 };
 
-export default YourComponent;
+export default AddCategory;

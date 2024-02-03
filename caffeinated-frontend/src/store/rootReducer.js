@@ -5,7 +5,7 @@ import productReducer from './slices/productSlice';
 
 const rootReducer = combineReducers({
   categories: categoryReducer,
-  product: productReducer,
+  products: productReducer,
   cart: cartReducer,
 });
 

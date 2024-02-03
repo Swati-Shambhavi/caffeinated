@@ -1,6 +1,26 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { json } from 'react-router-dom';
+
+export const fetchAllProducts = createAsyncThunk(
+  'products/fetchAllProducts',
+  async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:8080/caffeinated/products/api'
+      );
+      console.log('Raw Product Response after Fetch all API call', response);
+      if (response.status >= 200 && response.status < 300) {
+        const data = response.data;
+        console.log('JSON Product Response after Fetch all API call', data);
+        return data;
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.log('Error Fetching products', error);
+    }
+  }
+);
 
 export const fetchProductItem = createAsyncThunk(
   'products/fetchProductItem',
@@ -30,7 +50,6 @@ export const addProduct = createAsyncThunk(
   async (product) => {
     const formData = new FormData();
 
-    // Append the JSON data as a blob
     formData.append(
       'product',
       new Blob(
@@ -48,7 +67,6 @@ export const addProduct = createAsyncThunk(
       )
     );
 
-    // Append the image directly
     formData.append('image', product.image);
     console.log('In async Func:', formData.values);
     try {
@@ -61,11 +79,42 @@ export const addProduct = createAsyncThunk(
           },
         }
       );
-      console.log('AXIOS', response);
+      console.log('Response', response);
       return response.data;
     } catch (error) {
       console.error('Error adding product:', error);
       throw error;
+    }
+  }
+);
+
+export const updateProduct = createAsyncThunk(
+  'products/updateProduct',
+  async ({ product, productId }) => {
+    const updatedProduct = await axios.put(
+      `http://localhost:8080/caffeinated/products/api/${productId}`,
+      product
+    );
+  }
+);
+
+export const deleteProduct = createAsyncThunk(
+  'products/deleteProduct',
+  async ({ productId }) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:8080/caffeinated/products/api/${productId}`
+      );
+      console.log('Raw Product Response after delete API call', response);
+      if (response.status >= 200 && response.status < 300) {
+        const data = response.data;
+        console.log('JSON Product Response after delete API call', data);
+        return data;
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.log('Error deleteing product', error);
     }
   }
 );
@@ -78,15 +127,45 @@ const initialState = {
 const productSlice = createSlice({
   name: 'products',
   initialState,
-  reducers: {},
+  reducers: {
+    getProductById: (state, action) => {
+      const productId = action.payload;
+      const existingProduct = state.data[productId];
+      if (existingProduct) {
+        // Product already in state, return it
+        state.operationStatus = 'success';
+        state.error = null;
+      } else {
+        // Product not in state, trigger fetchProductItem
+        fetchProductItem(state.dispatch, productId);
+        state.operationStatus = 'pending';
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchAllProducts.pending, (state) => {
+        state.operationStatus = 'pending';
+      })
+      .addCase(fetchAllProducts.fulfilled, (state, action) => {
+        const products = action.payload.data;
+        products.forEach((product) => {
+          state.data[product.id] = product;
+        });
+        state.operationStatus = 'success';
+        state.error = null;
+      })
+      .addCase(fetchAllProducts.rejected, (state, action) => {
+        state.operationStatus = 'fail';
+        state.error = action.payload.error;
+      })
       .addCase(fetchProductItem.pending, (state) => {
         state.operationStatus = 'pending';
       })
       .addCase(fetchProductItem.fulfilled, (state, action) => {
+        const newProduct = action.payload.data;
+        state.data[newProduct.id] = newProduct;
         state.operationStatus = 'success';
-        state.data = action.payload.data;
         state.error = null;
       })
       .addCase(fetchProductItem.rejected, (state, action) => {
@@ -94,7 +173,8 @@ const productSlice = createSlice({
         state.error = action.payload.error;
       })
       .addCase(addProduct.fulfilled, (state, action) => {
-        state.data.push(action.payload.data);
+        const newProduct = action.payload.data;
+        state.data[newProduct.id] = newProduct;
       });
   },
 });

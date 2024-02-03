@@ -7,7 +7,7 @@ import AddCategory from './AddCategory';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Categories = () => {
-  const { data, error, loading } = useSelector((state) => state.categories);
+  const { data, error, operationStatus } = useSelector((state) => state.categories);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ const Categories = () => {
         <button onClick={()=>dispatch(fetchCategories())}>Try again</button>
         </div>}</div>
      
-      <div>{loading === 'loading' && <h3>Loading...</h3>}</div>
+      <div>{operationStatus === 'pending' && <h3>Loading...</h3>}</div>
       <div>
         {data.map((category) => (
           <CategoryItem

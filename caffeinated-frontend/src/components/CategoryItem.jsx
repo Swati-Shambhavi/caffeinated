@@ -6,7 +6,7 @@ import {setSelectedCategory} from '../store/slices/categorySlice';
 const CategoryItem = ({ category, onDelete, onUpdate }) => {
   const [newCategoryName, setNewCategoryName] = useState('');
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleDelete = () => {
     onDelete(category.id);

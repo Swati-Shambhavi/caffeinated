@@ -89,7 +89,7 @@ export const deleteCategory = createAsyncThunk(
 
 const initialState = {
   data: [],
-  operationStatus: '',
+  operationStatus: 'NA',
   selectedCategory: null,
   error: null,
 };

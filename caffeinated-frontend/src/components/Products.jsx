@@ -1,30 +1,45 @@
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom"
+import { fetchAllProducts } from "../store/slices/productSlice";
+import DisplayProducts from "./DisplayProducts";
+import { setSelectedCategory } from "../store/slices/categorySlice";
 
 const Products = () => {
   const navigate = useNavigate();
-  const {selectedCategory} = useSelector(state => state.categories) 
+  const dispatch = useDispatch();
+  const {categoryId} = useParams();
+  const {selectedCategory} = useSelector(state => state.categories)
+  const [filterBasedOnCategory, setFilterBasedOnCategory] = useState(false)
+  const products = useSelector(state=> state.products)
 
- const handleViewProduct=(productId) =>{
-    navigate(`/products/${productId}`)
+  useEffect(()=>{
+    if(categoryId != null){
+      if(selectedCategory == null){
+        dispatch(setSelectedCategory(category));
+      }
+      console.log("it also worked")
+      setFilterBasedOnCategory(true)
+    }else{
+      console.log("No category selected so triggering the fetchAllProduct action")
+      dispatch(fetchAllProducts())
+    
+    }
+  },[dispatch])
+
+
+ const handleAddProduct = () =>{
+  
  }
     
-  return (<>
-  
-    <h2 className="text-2xl text-yellow-500"> {selectedCategory.name} Products</h2>
-
-    <div>{selectedCategory.products.length == 0 && <h2>No products in stock for this category</h2>}</div>
-    <ul>
-      {selectedCategory.products.map(product => {
-        return <li key={product.id} className="card" onClick={()=>{handleViewProduct(product.id)}}> 
-          <h4>{product.name}</h4>
-          <p>{product.description}</p>
-          <br/>
-        </li>
-      })}
-    </ul>
+  return (
+    <>
+  {filterBasedOnCategory ? 
+    <DisplayProducts categoryFilterOn={true} categoriedProducts={selectedCategory.products}/> : <DisplayProducts categoryFilterOn={false} products={products}/>}
+  <Link to="/products/addProduct">
+    <button onClick={handleAddProduct}>Add Product</button>    
     <button onClick={()=>{navigate(-1)}}>Go back</button>
+    </Link>
     </>
   )
 }
