@@ -90,11 +90,41 @@ export const addProduct = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
   'products/updateProduct',
-  async ({ product, productId }) => {
-    const updatedProduct = await axios.put(
-      `http://localhost:8080/caffeinated/products/api/${productId}`,
-      product
+  async ({ productId, product }) => {
+    const updatedProductData = new FormData();
+
+    updatedProductData.append(
+      'product',
+      new Blob(
+        [
+          JSON.stringify({
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            categoryId: product.categoryId,
+            stockQuantity: product.stockQuantity,
+            available: product.available,
+          }),
+        ],
+        { type: 'application/json' }
+      )
     );
+
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/caffeinated/products/api/${productId}`,
+        updatedProductData,
+        {
+          headers: {
+            'Content-Type': `multipart/form-data; boundary=${updatedProductData._boundary}`,
+          },
+        }
+      );
+      console.log('Response', response);
+      return response.data;
+    } catch (error) {
+      throw new Error('Error updating the Product. Please try again.');
+    }
   }
 );
 
@@ -102,6 +132,10 @@ export const deleteProduct = createAsyncThunk(
   'products/deleteProduct',
   async ({ productId }) => {
     try {
+      console.log('productId:', productId);
+      if (!productId) {
+        throw new Error('Invalid productId. value:', productId);
+      }
       const response = await axios.delete(
         `http://localhost:8080/caffeinated/products/api/${productId}`
       );
@@ -180,3 +214,4 @@ const productSlice = createSlice({
 });
 
 export default productSlice.reducer;
+export const { getProductById } = productSlice.actions;

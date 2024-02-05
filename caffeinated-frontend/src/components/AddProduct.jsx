@@ -2,13 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { fetchCategories } from '../store/slices/categorySlice';
-import { useNavigate } from 'react-router-dom';
-import { addProduct, updateProduct } from '../store/slices/productSlice';
+import { getProductById, updateProduct } from '../store/slices/productSlice';
 
-const AddProductForm = ({ mode, initialProduct }) => {
+import { useNavigate, useParams } from 'react-router-dom';
+import { addProduct } from '../store/slices/productSlice';
+
+const AddProductForm = ({ mode }) => {
+  const {productId} = useParams()
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data: categoryData } = useSelector(state => state.categories);
+
+  useEffect(() => {
+    if (mode === 'update') {
+      dispatch(getProductById(productId));
+    }
+  }, [dispatch, mode, productId]);
+
+  const productData = useSelector((state) => state.products.data[productId]);
+
+  const { data: categoryData } = useSelector((state) => state.categories);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -26,13 +38,25 @@ const AddProductForm = ({ mode, initialProduct }) => {
     if (categoryData.length === 0) {
       dispatch(fetchCategories());
     }
-  }, []);
+  }, [categoryData.length, dispatch]);
 
   useEffect(() => {
-    if (mode === 'update' && initialProduct) {
-      setFormData(initialProduct);
+    if (mode === 'update' && productData) {
+      setFormData({
+        name: productData.name || '',
+        description: productData.description || '',
+        price: productData.price || 0,
+        stockQuantity: productData.stockQuantity || 0,
+        available: productData.available || false,
+        categoryId: productData.categoryId || 0,
+        image: null, 
+        discountPercentage: productData.discountPercentage || 0,
+        discountStartDate: productData.discountStartDate || '',
+        discountEndDate: productData.discountEndDate || '',
+      });
     }
-  }, [mode, initialProduct]);
+  }, [mode, productData]);
+
 
   const handleChange = e => {
     const { name, value, type, checked, files } = e.target;
@@ -63,7 +87,7 @@ const AddProductForm = ({ mode, initialProduct }) => {
       dispatch(addProduct(productData));
     } else if (mode === 'update') {
       console.log("Update product triggered",productData)
-      // dispatch(updateProduct({ productId: initialProduct.id, product: productData }));
+      dispatch(updateProduct({ productId: productId, product: productData }));
     }
 
     setFormData({

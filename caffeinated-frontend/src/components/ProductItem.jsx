@@ -8,21 +8,24 @@ const ProductItem = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const  { data, error, operationStatus } = useSelector(state => state.products)
+    const productData= data[productId] ?? null
     useEffect(()=>{
         dispatch(fetchProductItem(productId))
     },[dispatch, productId])
     
-    const handleDelete = (productId) =>{
+    const handleDelete = () =>{
       dispatch(deleteProduct({productId: productId}))
       navigate(-1)
     }
   return (<>
  
-    <div>ProductItem {productId} </div> 
+    <div>Product Item {productId} </div> 
     {/* {!data && operationStatus === 'pending' && <h3>Loading....</h3>}        */}
-  <div>{data.name}</div>
+  {!productData && <h2>Oops, no product found with this id</h2>}
+  {productData && <div>{productData.name}</div>}
+
  <button onClick={()=>navigate(-1)}>Back</button>
- <button onClick={()=>deleteProduct(productId)} >Delete</button>
+ <button onClick={handleDelete} >Delete</button>
  <Link to={`/products/updateProduct/${productId}`}>
   <button>Update</button>
  </Link>

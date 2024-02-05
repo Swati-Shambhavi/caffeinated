@@ -16,12 +16,17 @@ import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
-//@EnableWebFluxSecurity
+@EnableWebFluxSecurity
 public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain securityFiterChain(ServerHttpSecurity http){
-        http.authorizeExchange(exchanges ->  exchanges
+        http
+                .cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
+                .authorizeExchange(exchanges ->  exchanges
                         .pathMatchers(HttpMethod.GET, "/caffeinated/categories/**").permitAll()
                         .pathMatchers(HttpMethod.GET, "/caffeinated/products/**").permitAll()
 //                        .pathMatchers("/caffeinated/categories/**").hasRole("ADMIN")
@@ -48,13 +53,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000"); // Add your allowed origin(s)
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
-
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 }

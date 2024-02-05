@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {setSelectedCategory} from '../store/slices/categorySlice';
+import AuthorizedElement from '../utility/AuthorizedElement';
 
 const CategoryItem = ({ category, onDelete, onUpdate }) => {
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -30,8 +31,8 @@ const CategoryItem = ({ category, onDelete, onUpdate }) => {
         onChange={(e) => setNewCategoryName(e.target.value)}
         placeholder="New Category Name"
       />
-      <button onClick={handleUpdate}>Update</button>
-      <button onClick={handleDelete}>Delete</button>
+       <AuthorizedElement roles={["ADMIN"]}><button onClick={handleUpdate}>Update</button></AuthorizedElement> 
+      <AuthorizedElement roles={["ADMIN"]}><button onClick={handleDelete}>Delete</button></AuthorizedElement> 
       <button onClick={handleViewProducts}>View Products</button>
     </div>
   );

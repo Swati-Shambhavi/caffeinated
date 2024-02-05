@@ -25,10 +25,10 @@ const Categories = () => {
 
   return (
     <>
-    <div>
+   {!error&& <div>
           <AddCategory/>
-        </div>
-      <div>{error && <div>
+        </div>}
+      <div>{operationStatus !== 'pending' &&error && <div>
         <h2>Oops! {error}</h2>
         <button onClick={()=>dispatch(fetchCategories())}>Try again</button>
         </div>}</div>
