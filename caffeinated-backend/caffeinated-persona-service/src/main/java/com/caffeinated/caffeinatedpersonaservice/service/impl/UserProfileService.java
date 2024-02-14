@@ -21,13 +21,13 @@ public class UserProfileService implements IUserProfileService {
 //	@Autowired
 //	private PasswordEncoder passwordEncoder;
 
-	public ServiceResponse updateProfile(User user, Integer userId) {
+	public ServiceResponse updateProfile(User user, String email) {
 		ServiceResponse response = ServiceResponse.builder().build();
 		try {
-			Optional<User> __user = userRepo.findById(userId);
+			Optional<User> __user = userRepo.findByEmail(email);
 			if (__user.isEmpty()) {
 				Map<String, String> error = new HashMap<>();
-				error.put("600", "No user found with User id:" + userId);
+				error.put("600", "No user found with User email:" + email);
 				response.setError(error);
 				return response;
 			}

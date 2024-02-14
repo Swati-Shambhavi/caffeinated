@@ -1,5 +1,20 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+export const setAccessTokenAsync = createAsyncThunk(
+  'user/setAccessToken',
+  async (accessToken, { dispatch }) => {
+    localStorage.setItem('accessToken', accessToken);
+    dispatch(setAccessToken(accessToken));
+  }
+);
+
+export const clearAccessTokenAsync = createAsyncThunk(
+  'user/clearAccessToken',
+  async (_, { dispatch }) => {
+    localStorage.removeItem('accessToken');
+    dispatch(clearUser());
+  }
+);
 const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -19,7 +34,13 @@ const userSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       state.accessToken = null;
+      state.userEmail = '';
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(setAccessTokenAsync.fulfilled, (state, action) => {})
+      .addCase(clearAccessTokenAsync.fulfilled, (state) => {});
   },
 });
 

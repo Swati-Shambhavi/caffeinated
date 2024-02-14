@@ -2,7 +2,7 @@ import Keycloak from 'keycloak-js';
 
 const keycloakConfig = {
   realm: 'dev',
-  clientId: 'caffeinated-ui',
+  clientId: '',
   url: 'http://localhost:8060/auth/',
 };
 

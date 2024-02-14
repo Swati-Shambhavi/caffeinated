@@ -29,14 +29,10 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges ->  exchanges
                         .pathMatchers(HttpMethod.GET, "/caffeinated/categories/**").permitAll()
                         .pathMatchers(HttpMethod.GET, "/caffeinated/products/**").permitAll()
-//                        .pathMatchers("/caffeinated/categories/**").hasRole("ADMIN")
-                        .pathMatchers("/caffeinated/categories/**").permitAll()
-                                .pathMatchers("/caffeinated/products/**").permitAll()
-
-
-//                        .pathMatchers("/caffeinated/products/**").hasRole("ADMIN")
-//                        .pathMatchers("/caffeinated/users/**").authenticated()
-//                        .pathMatchers("/caffeinated/carts/**").authenticated()
+                        .pathMatchers(HttpMethod.POST, "/caffeinated/categories/**").hasRole("ADMIN")
+                        .pathMatchers("/caffeinated/products/**").permitAll()
+                        .pathMatchers("/caffeinated/carts/**").authenticated()
+                        .pathMatchers("/caffeinated/users/**").authenticated()
                 )
                 .oauth2ResourceServer(oauth2ResourceServerSpec -> oauth2ResourceServerSpec
                         .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor())));

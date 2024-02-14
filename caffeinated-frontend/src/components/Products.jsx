@@ -34,6 +34,7 @@ const Products = () => {
     
   return (
     <>
+    <h1>Inside Products page</h1>
   {filterBasedOnCategory ? 
     <DisplayProducts categoryFilterOn={true} categoriedProducts={selectedCategory.products}/> : <DisplayProducts categoryFilterOn={false} products={products}/>}
   <Link to="/products/addProduct">

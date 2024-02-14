@@ -1,4 +1,3 @@
-// YourComponent.jsx
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addCategory } from '../store/slices/categorySlice';

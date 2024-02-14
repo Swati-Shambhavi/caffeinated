@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  keycloak:
+    image: jboss/keycloak:latest
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    ports:
+      - 8050:8080
+    volumes:
+      - ./target/keycloak-user-service-0.0.1-SNAPSHOT.jar:/opt/jboss/keycloak/standalone/deployments/keycloak-user-service-0.0.1-SNAPSHOT.jar

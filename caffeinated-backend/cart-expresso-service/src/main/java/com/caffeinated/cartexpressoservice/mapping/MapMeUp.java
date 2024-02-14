@@ -3,7 +3,6 @@ package com.caffeinated.cartexpressoservice.mapping;
 import com.caffeinated.cartexpressoservice.entity.*;
 import com.caffeinated.cartexpressoservice.model.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,23 +30,23 @@ public class MapMeUp {
                 .cart(isCartRequired && userDto.getCart()!=null?toCartEntity(userDto.getCart(), userDto):null)
                 .email(userDto.getEmail())
                 .mobileNumber(userDto.getMobileNumber())
-//                .password(userDto.g)
                 .role(userDto.getRole())
                 .build();
 
     }
 
-    public static Cart toCartEntity(CartDto cartDto, UserDto userDto) {
+    public static Cart toCartEntity(CartResponse cartResponse, UserDto userDto) {
         Cart cart= Cart.builder()
-                .id(cartDto.getId())
+                .id(cartResponse.getId())
 //        .user(userDto!=null?MapMeUp.toUserEntity(userDto):null)
-                .totalPrice(cartDto.getTotalPrice())
+                .totalPrice(cartResponse.getTotalPrice())
                 .build();
-        userDto.setCart(cartDto);
+        userDto.setCart(cartResponse);
         cart.setUser(userDto!=null?MapMeUp.toUserEntity(userDto, false):null);
-        cart.setCartItems(cartDto.getCartItems()!=null?toCartItemsList(cartDto.getCartItems(), cart):null);
+        cart.setCartItems(cartResponse.getCartItems()!=null?toCartItemsList(cartResponse.getCartItems(), cart):null);
         return cart;
     }
+
     public static Address toAddressEntity(AddressDto dto)
     {
         return Address.builder()
@@ -59,18 +58,18 @@ public class MapMeUp {
                 .pinCode(dto.getPinCode())
                 .build();
     }
-    private static Set<CartItem> toCartItemsList(List<CartItemDto> cartItemsDto, Cart cart) {
-        Set<CartItem> cartItems = new HashSet<>();
-        cartItemsDto.forEach(dto -> {
-            CartItem cartItem = CartItem.builder()
-                    .id(dto.getId())
-                    .product(toProductEntity(dto.getProduct()))
-                    .quantity(dto.getQuantity())
-                    .unitPrice(dto.getUnitPrice())
-                    .cart(cart)
-                    .build();
-            cartItems.add(cartItem);
-        });
-        return cartItems;
-    }
+//    private static Set<CartItem> toCartItemsList(List<CartItemDto> cartItemsDto, Cart cart) {
+//        Set<CartItem> cartItems = new HashSet<>();
+//        cartItemsDto.forEach(dto -> {
+//            CartItem cartItem = CartItem.builder()
+//                    .id(dto.getId())
+//                    .product(toProductEntity(dto.getProduct()))
+//                    .quantity(dto.getQuantity())
+//                    .unitPrice(dto.getUnitPrice())
+//                    .cart(cart)
+//                    .build();
+//            cartItems.add(cartItem);
+//        });
+//        return cartItems;
+//    }
 }

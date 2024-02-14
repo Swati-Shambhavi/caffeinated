@@ -1,5 +1,7 @@
 // categoriesSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { setAccessTokenAsync } from './userSlice';
+import axios from 'axios';
 
 // Async Thunk to fetch categories
 export const fetchCategories = createAsyncThunk(
@@ -25,25 +27,36 @@ export const fetchCategories = createAsyncThunk(
   }
 );
 
-// Async Thunk to add a new category
 export const addCategory = createAsyncThunk(
   'categories/addCategory',
-  async (category) => {
-    const response = await fetch(
-      'http://localhost:8080/caffeinated/categories/api',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(category),
+  async (category, { getState, dispatch }) => {
+    const { user } = getState();
+    try {
+      if (!user.accessToken) {
+        throw new Error('User not authenticated');
       }
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      const accessToken = getState().user.accessToken;
+
+      const url = 'http://localhost:8080/caffeinated/categories/api';
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      };
+
+      // Log the request details
+      console.log('Request URL:', url);
+      console.log('Request Headers:', headers);
+      console.log('Request Body:', JSON.stringify(category));
+
+      const response = await axios.post(url, category, { headers });
+      console.log('Response:', response);
+      console.log('Response Data:', response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Error adding category. Please try again.');
     }
-    const data = await response.json();
-    return data;
   }
 );
 
@@ -98,8 +111,13 @@ const categorySlice = createSlice({
   name: 'categories',
   initialState,
   reducers: {
-    setSelectedCategory: (state, action) => {
-      state.selectedCategory = action.payload;
+    // setSelectedCategory: (state, action) => {
+    //   state.selectedCategory = action.payload;
+    // },
+    fetchCategoryById: (state, action) => {
+      const categoryId = action.payload.categoryId;
+      const category = state.data.find((category) => category.id == categoryId);
+      state.selectedCategory = category || null;
     },
   },
   extraReducers: (builder) => {
@@ -132,8 +150,7 @@ const categorySlice = createSlice({
         }
       })
       .addCase(deleteCategory.fulfilled, (state, action) => {
-        // Modify this case to remove the category based on the categoryId
-        const deletedCategoryId = action.meta.arg; // This gets the categoryId passed to the thunk
+        const deletedCategoryId = action.meta.arg;
         state.data = state.data.filter(
           (category) => category.id !== deletedCategoryId
         );
@@ -141,5 +158,5 @@ const categorySlice = createSlice({
   },
 });
 
-export const { setSelectedCategory } = categorySlice.actions;
+export const { setSelectedCategory, fetchCategoryById } = categorySlice.actions;
 export default categorySlice.reducer;

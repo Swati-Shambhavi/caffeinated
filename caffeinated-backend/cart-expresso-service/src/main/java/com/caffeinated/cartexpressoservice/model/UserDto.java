@@ -17,7 +17,7 @@ public class UserDto {
     private String name;
     private String mobileNumber;
     private AddressDto address;
-    private CartDto cart;
+    private CartResponse cart;
     @JsonProperty("address")
     public void setAddress(AddressDto address) {
         this.address = address;

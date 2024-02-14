@@ -1,0 +1,12 @@
+Link to AUthN AuthZ chatgpt queries: https://chat.openai.com/share/d0810dfd-56d9-45e9-9220-72a96b4203d7
+
+docker run -e KEYCLOAK_DATABASE_URL=jdbc:mysql://192.168.1.36:3306/caffeinated_keycloak \
+           -e KEYCLOAK_DATABASE_USER=swati \
+           -e KEYCLOAK_DATABASE_PASSWORD=swati@123 \
+           -p 8080:8080 \
+           jboss/keycloak
+
+
+DATABASE_URL = jdbc:mysql://192.168.1.33:3306/caffeinated;
+DATABASE_USERNAME = swati; 
+DATABASE_PASSWORD = swati@123;

@@ -4,7 +4,7 @@ const DisplayProducts = ({categoryFilterOn,categoriedProducts, products}) => {
   const navigate = useNavigate()
   return (
     <div>{categoryFilterOn ? (<div className="">    
-    <div>{categoriedProducts.length == 0 && <h2>No products in stock for this category</h2>}</div>
+    <div>{categoriedProducts && categoriedProducts.length == 0 && <h2>No products in stock for this category</h2>}</div>
     <ul>
     {categoriedProducts.map(product => {
       return <li key={product.id} className="card" onClick={()=>navigate(`/products/${product.id}`)}> 

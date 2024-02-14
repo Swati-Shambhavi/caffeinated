@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
@@ -19,14 +20,16 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
-	public ServiceResponse handleException(Exception e) {
+	public ResponseEntity<ServiceResponse> handleException(Exception e) {
 		log.error("CONTROLLER ADVICE" + e);
 		e.printStackTrace();
 		Map<String, String> error = new HashMap<>();
 		error.put("ERR", e.getMessage());
-		return ServiceResponse.builder().error(error).build();
 
+		ServiceResponse serviceResponse = ServiceResponse.builder().error(error).build();
+		return new ResponseEntity<>(serviceResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception,
 																		 WebRequest webRequest) {

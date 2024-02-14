@@ -26,7 +26,11 @@ public class CartController {
 	}
 
 	@DeleteMapping("/{userEmail}")
-	public ServiceResponse removeFromCart(@RequestParam Integer productId, @PathVariable String userEmail) throws Exception {
+	public ServiceResponse removeFromCart(@RequestBody Integer productId, @PathVariable String userEmail) throws Exception {
 		return service.removeFromCart(userEmail, productId);
 	}
+//	@DeleteMapping("/{userEmail}")
+//	public ServiceResponse removeFromCart(@RequestBody CartItemRequest item, @PathVariable String userEmail) throws Exception {
+//		return service.removeFromCart(userEmail, item.getProductId());
+//	}
 }

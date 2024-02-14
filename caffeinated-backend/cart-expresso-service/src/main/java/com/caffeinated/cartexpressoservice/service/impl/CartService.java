@@ -4,10 +4,7 @@ import com.caffeinated.cartexpressoservice.entity.CartItem;
 import com.caffeinated.cartexpressoservice.exception.ExternalServiceException;
 import com.caffeinated.cartexpressoservice.exception.ResourceNotFoundException;
 import com.caffeinated.cartexpressoservice.mapping.MapMeUp;
-import com.caffeinated.cartexpressoservice.model.CartItemRequest;
-import com.caffeinated.cartexpressoservice.model.ProductDto;
-import com.caffeinated.cartexpressoservice.model.ServiceResponse;
-import com.caffeinated.cartexpressoservice.model.UserDto;
+import com.caffeinated.cartexpressoservice.model.*;
 import com.caffeinated.cartexpressoservice.repo.CartRepository;
 import com.caffeinated.cartexpressoservice.service.ICartService;
 import com.caffeinated.cartexpressoservice.service.client.CaffeinatedPersonaFeignClient;
@@ -20,10 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -37,18 +31,39 @@ public class CartService implements ICartService {
 	public ServiceResponse getCartDetails(String email) {
 		Optional<Cart> cart = cartRepo.findByUserEmail(email);
 		ServiceResponse response = ServiceResponse.builder().build();
-//
+		List<CartItemDto> cartItemDto = new ArrayList<>();
+		CartResponse cartResponse = CartResponse.builder().totalPrice(0d).cartItems(cartItemDto).build();
 		if (cart.isEmpty()) {
-			response.setData("Your cart is empty.");
+			log.info("No cart detail found with this email");
+			response.setData(cartResponse);
 		} else {
-			response.setData(cart.get());
+			setCartResponseDetail(cartResponse, response, cart.get());
+
 		}
 		return response;
 	}
 
+	private void setCartResponseDetail(CartResponse cartResponse, ServiceResponse response, Cart cart) {
+		cartResponse.setTotalPrice(cart.getTotalPrice());
+		List<CartItemDto> cartItemDtoList = cartResponse.getCartItems();
+		cart.getCartItems().forEach(cartItem -> {
+			CartItemDto cartItemDto = CartItemDto.builder()
+					.productName(cartItem.getProduct().getName())
+					.productId(cartItem.getProduct().getId())
+					.productDescription(cartItem.getProduct().getDescription())
+					.price(cartItem.getProduct().getPrice())
+					.quantity(cartItem.getQuantity())
+					.unitPrice(cartItem.getUnitPrice())
+					.totalPrice(cartItem.getTotalPrice())
+					.imagePath(cartItem.getProduct().getImagePath())
+					.build();
+			cartItemDtoList.add(cartItemDto);
+		});
+		cartResponse.setCartItems(cartItemDtoList);
+	}
+
 	@Transactional
 	public ServiceResponse addToCart(String userEmail, CartItemRequest itemDto) throws Exception {
-//		Optional<Cart> _cart = cartRepo.findByUserEmail(userEmail);
 		UserDto userDto = userExternalService.getUser(userEmail);
 		Cart cart;
 		if (userDto.getCart()==null) {
@@ -58,8 +73,6 @@ public class CartService implements ICartService {
 		} else {
 			cart = MapMeUp.toCartEntity(userDto.getCart(), userDto);
 		}
-
-
 		// Check if the product exists
 		//Call MS2 to get product details
 		ProductDto product = productExternalService.getProduct(itemDto.getProductId());
