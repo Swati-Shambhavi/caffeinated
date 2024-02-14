@@ -30,10 +30,8 @@ public class ProductController {
 		return ResponseEntity.ok(response);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<ServiceResponse> addProduct(@Validated(PostValidation.class) @RequestPart("product") ProductRequest product,
-													  @RequestPart("image") MultipartFile image) throws Exception {
-		product.setImage(image);
+	@PostMapping
+	public ResponseEntity<ServiceResponse> addProduct(@Validated(PostValidation.class) @RequestBody ProductRequest product) throws Exception {
 		logRequestInfo("addProduct", product);
 		ServiceResponse response = productService.addNewProduct(product);
 		logResponseInfo("addProduct", response);
@@ -56,16 +54,10 @@ public class ProductController {
 		return ResponseEntity.ok(response);
 	}
 
-	@RequestMapping(method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, value = "/{productId}")
+	@PutMapping("/{productId}")
 	public ResponseEntity<ServiceResponse> updateProduct(@PathVariable Integer productId,
-														 @Validated(PutValidation.class) @RequestPart(required = false, value = "product") ProductRequest product,
-														 @RequestPart(required = false, value = "image") MultipartFile image) throws Exception {
-		logRequestInfo("updateProduct", productId);
-		// In case only the image needs to be updated, there is no need to send the product JSON in the request
-		if (product == null) {
-			product = ProductRequest.builder().build();
-		}
-		product.setImage(image);
+														 @Validated(PutValidation.class) @RequestBody ProductRequest product) throws Exception {
+		logRequestInfo("updateProduct", product);
 		ServiceResponse response = productService.updateProduct(productId, product);
 		logResponseInfo("updateProduct", response);
 		return ResponseEntity.ok(response);

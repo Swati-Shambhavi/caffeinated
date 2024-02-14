@@ -24,12 +24,8 @@ public class ProductRequest {
 	private Boolean available;
 	@NotNull(groups = PostValidation.class)
 	private Integer categoryId;
-//	@NotNull(groups = PostValidation.class)
-	private MultipartFile image;
-
+	private String imagePath;
 	private Double discountPercentage;
-
 	private LocalDate discountStartDate;
-
 	private LocalDate discountEndDate;
 }
