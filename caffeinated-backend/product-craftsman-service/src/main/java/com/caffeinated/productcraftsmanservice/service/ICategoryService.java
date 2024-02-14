@@ -7,7 +7,7 @@ public interface ICategoryService {
 
     ServiceResponse addNewCategory(CategoryRequest categoryDto);
     ServiceResponse getAllCategories();
-    ServiceResponse getCategories(Integer categoryId) ;
+    ServiceResponse getCategory(Integer categoryId) ;
     ServiceResponse deleteCategory(Integer categoryId) ;
     ServiceResponse updateCategory(Integer categoryId, CategoryRequest categoryDto);
     }

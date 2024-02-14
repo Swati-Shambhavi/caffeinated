@@ -38,7 +38,7 @@ public class Product extends BaseEntity {
 	private String description;
 
 	@Column(nullable = false)
-	private double price;
+	private Double price;
 
 	@Column(name = "stock_quantity", nullable = false)
 	private int stockQuantity;
@@ -52,15 +52,11 @@ public class Product extends BaseEntity {
 	@JsonIgnore
 	private Category category;
 
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnore
-	private Set<CartItem> items = new HashSet<>();
-
 	@Column(name = "image_path")
 	private String imagePath;
 
 	@Column(name = "discount_percentage")
-	private double discountPercentage;
+	private Double discountPercentage;
 
 	@Column(name = "discount_start_date")
 	private LocalDate discountStartDate;
