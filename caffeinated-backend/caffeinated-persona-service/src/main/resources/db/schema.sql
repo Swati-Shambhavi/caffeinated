@@ -25,4 +25,7 @@ CREATE TABLE `users` (
    PRIMARY KEY (`id`),
    KEY `address_id` (`address_id`),
    CONSTRAINT `users_ibfk_1` FOREIGN KEY (`address_id`) REFERENCES `address` (`id`)
- ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+ ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ ALTER TABLE `address`
+ MODIFY COLUMN `pin_code` varchar(20) NOT NULL;

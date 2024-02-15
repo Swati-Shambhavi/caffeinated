@@ -1,30 +1,20 @@
 package com.caffeinated.caffeinatedpersonaservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Objects;
-
 @Entity
 @Table(name = "users")
-//@Data
 @Getter
 @Setter
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Integer id;
 
     @Column(nullable = false, unique = true, length = 45)
     private String email;
-
-    @Column(nullable = false, length = 64)
-    @JsonIgnore
-    private String password;
 
     @Column
     private String role;
@@ -34,29 +24,8 @@ public class User extends BaseEntity {
     private String mobileNumber;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = Address.class)
-    @JoinColumn(name = "address_id", referencedColumnName = "addressId", nullable = true)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-//	@JsonManagedReference
-    private Cart cart;
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, password, role);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-
-        User user = (User) obj;
-        return Objects.equals(id, user.id) && Objects.equals(email, user.email)
-                && Objects.equals(password, user.password) && Objects.equals(role, user.role);
-    }
 
     public String getName() {
         return name;
@@ -86,26 +55,12 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @JsonIgnore
-    public String getPassword() {
-        return password;
-    }
-
-    @JsonProperty
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getRole() {
@@ -116,10 +71,5 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    /**
-     * @JsonIgnore
-     * @OneToMany(mappedBy = "users", fetch = FetchType.EAGER) private
-     *                     Set<Authority> authorities;
-     **/
 }
 

@@ -5,11 +5,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.caffeinated.caffeinatedpersonaservice.entity.Address;
-import com.caffeinated.caffeinatedpersonaservice.entity.Cart;
 import com.caffeinated.caffeinatedpersonaservice.entity.User;
+import com.caffeinated.caffeinatedpersonaservice.model.AddressDto;
 import com.caffeinated.caffeinatedpersonaservice.model.ServiceResponse;
+import com.caffeinated.caffeinatedpersonaservice.model.UserProfileDto;
 import com.caffeinated.caffeinatedpersonaservice.repo.UserRepository;
 import com.caffeinated.caffeinatedpersonaservice.service.IUserProfileService;
+import com.caffeinated.caffeinatedpersonaservice.util.MapMeUp;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import io.micrometer.common.util.StringUtils;
@@ -18,10 +20,8 @@ import io.micrometer.common.util.StringUtils;
 @AllArgsConstructor
 public class UserProfileService implements IUserProfileService {
 	private UserRepository userRepo;
-//	@Autowired
-//	private PasswordEncoder passwordEncoder;
 
-	public ServiceResponse updateProfile(User user, String email) {
+	public ServiceResponse updateProfile(UserProfileDto userDto, String email) {
 		ServiceResponse response = ServiceResponse.builder().build();
 		try {
 			Optional<User> __user = userRepo.findByEmail(email);
@@ -32,34 +32,28 @@ public class UserProfileService implements IUserProfileService {
 				return response;
 			}
 			User userFromDB = __user.get();
-			updateAllFields(user, userFromDB);
-			response.setData(userRepo.save(userFromDB));
+			updateAllFields(userDto, userFromDB);
+			response.setData(MapMeUp.toUserProfileDto(userRepo.save(userFromDB)));
 		} catch (Exception e) {
 			Map<String, String> error = new HashMap<>();
 			error.put("500", e.getMessage());
 			response.setError(error);
 			return response;
 		}
-
 		return response;
 	}
 
-	private void updateAllFields(User user, User userFromDB) {
-		if (StringUtils.isNotBlank(user.getEmail())) {
-			userFromDB.setEmail(user.getEmail());
+	private void updateAllFields(UserProfileDto userDto, User userFromDB) {
+		if (StringUtils.isNotBlank(userDto.getEmail())) {
+			userFromDB.setEmail(userDto.getEmail());
 		}
-		if (StringUtils.isNotBlank(user.getName())) {
-			userFromDB.setName(user.getName());
+		if (StringUtils.isNotBlank(userDto.getName())) {
+			userFromDB.setName(userDto.getName());
 		}
-		if (StringUtils.isNotBlank(user.getMobileNumber())) {
-			userFromDB.setMobileNumber(user.getMobileNumber());
+		if (StringUtils.isNotBlank(userDto.getMobileNumber())) {
+			userFromDB.setMobileNumber(userDto.getMobileNumber());
 		}
-		if (StringUtils.isNotBlank(user.getPassword())) {
-//			userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
-			userFromDB.setPassword(user.getPassword());
-
-		}
-		if (user.getAddress() != null) {
+		if (userDto.getAddress() != null) {
 			//Check if the user's address was present in db
 			Address addFromDB;
 			if(userFromDB.getAddress()==null){
@@ -67,12 +61,12 @@ public class UserProfileService implements IUserProfileService {
 			}else{
 				addFromDB = userFromDB.getAddress();
 			}
-			mapAddressDetails(addFromDB,user.getAddress());
+			mapAddressDetails(addFromDB,userDto.getAddress());
 			userFromDB.setAddress(addFromDB);
 		}
 	}
 
-	private void mapAddressDetails(Address addInDb, Address _addInReq) {
+	private void mapAddressDetails(Address addInDb, AddressDto _addInReq) {
 		if(StringUtils.isNotBlank(_addInReq.getAddress1())){
 			addInDb.setAddress1(_addInReq.getAddress1());
 		}
@@ -88,6 +82,9 @@ public class UserProfileService implements IUserProfileService {
 		if(StringUtils.isNotBlank(_addInReq.getPinCode())){
 			addInDb.setPinCode(_addInReq.getPinCode());
 		}
+		if(StringUtils.isNotBlank(_addInReq.getCountry())){
+			addInDb.setPinCode(_addInReq.getCountry());
+		}
 	}
 
 	public ServiceResponse getUserProfile(String email) {
@@ -100,19 +97,18 @@ public class UserProfileService implements IUserProfileService {
 				response.setError(error);
 				return response;
 			}
-			response.setData(__user.get());
+			response.setData(MapMeUp.toUserProfileDto(__user.get()));
 		} catch (Exception e) {
 			Map<String, String> error = new HashMap<>();
 			error.put("500", e.getMessage());
 			response.setError(error);
 			return response;
 		}
-
 		return response;
 	}
 
-	@Override
-	public ServiceResponse registerUser(User user) {
+	/**@Override
+	public ServiceResponse registerUser(UserProfileDto user) {
 //		String encodedPassword = passwordEncoder.encode(user.getPassword());
 //		user.setPassword(encodedPassword);
 		user.setRole("ROLE_USER");
@@ -126,6 +122,6 @@ public class UserProfileService implements IUserProfileService {
 			response.setError(error);
 		}
 		return response;
-	}
+	}**/
 
 }
