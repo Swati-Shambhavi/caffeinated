@@ -27,7 +27,7 @@ public class ExceptionControllerAdvice {
         errors.put("50001",error.getMessage());
         ServiceResponse response = ServiceResponse.builder().error(Error.builder().code("5000").message("Resource Not Found").errors(errors).build()).build();
         log.error("Final Error Response: {}",kv("response",response));
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

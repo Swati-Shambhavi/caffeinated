@@ -47,4 +47,24 @@ resilience4j.retry:
       waitDuration: 300
       enableExponentialBackoff: true
       exponentialBackoffMultiplier: 2
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: FULL
+
+service-config:
+  externalServiceException:
+    code: 7000
+    description: External Service Exception
+  internalServerException:
+    code: 5000
+    description: Internal Server Exception
+  businessException:
+    code: 6000
+    description: Business validation Exception
+  externalServiceExceptions:
+    productCraftsmanService:
+      code: 700001
+      description: Error from the Products Craftsman Service
 

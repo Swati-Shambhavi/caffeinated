@@ -9,5 +9,5 @@ import lombok.Data;
 @Builder
 public class ServiceResponse {
 	private Object data;
-	private Map<String,String> error;
+	private ErrorData error;
 }

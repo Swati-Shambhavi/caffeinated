@@ -5,15 +5,16 @@ import com.caffeinated.caffeinatedpersonaservice.model.UserProfileDto;
 import com.caffeinated.caffeinatedpersonaservice.service.IUserProfileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.web.bind.annotation.*;
+
+import static net.logstash.logback.argument.StructuredArguments.kv;
 
 @RestController
 @RequestMapping("/users/api")
 @AllArgsConstructor
 @Slf4j
 public class UserProfileController {
-    private IUserProfileService service;
+    private final IUserProfileService service;
 
 //    @PostMapping("/register")
 //    public void addNewUser(@RequestBody UserRegistrationRequest userRequest) {
@@ -22,17 +23,30 @@ public class UserProfileController {
 
     @GetMapping("/{email}")
     public ServiceResponse getUserDetail(@PathVariable String email) {
-        log.info("User Service called for email:" + email);
-        return service.getUserProfile(email);
+        logRequestInfo("getUserDetail", email);
+        ServiceResponse response = service.getUserProfile(email);
+        logResponseInfo("getUserDetail", response);
+        return response;
     }
 
     @PutMapping("/{email}")
     public ServiceResponse updateUserDetail(@RequestBody UserProfileDto user, @PathVariable String email) {
-        return service.updateProfile(user, email);
+        logRequestInfo("updateUserDetail", user);
+        ServiceResponse response = service.updateProfile(user, email);
+        logResponseInfo("updateUserDetail", response);
+        return response;
     }
 
 //    @PostMapping("/register")
 //    public ServiceResponse allUser(@RequestBody User user) {
 //        return service.registerUser(user);
 //    }
+
+    private void logRequestInfo(String methodName, Object requestData) {
+        log.info("Initial Request from {}: {}", methodName, kv("request", requestData));
+    }
+
+    private void logResponseInfo(String methodName, ServiceResponse responseData) {
+        log.info("Final Response from {}: {}", methodName, kv("response", responseData));
+    }
 }

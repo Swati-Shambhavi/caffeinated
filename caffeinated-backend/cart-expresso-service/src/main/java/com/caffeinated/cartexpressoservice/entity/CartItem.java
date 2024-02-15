@@ -19,7 +19,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-//@Data
 @Getter
 @Setter
 @Builder
@@ -28,26 +27,20 @@ import lombok.Setter;
 @Table(name="cart_items")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class CartItem {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-
 	@ManyToOne
 	@JoinColumn(name = "cart_id", nullable = false)
-//	@JsonBackReference
 	@JsonIgnoreProperties
 	private Cart cart;
-
-	@ManyToOne
-	@JoinColumn(name = "product_id", nullable = false)
-	private Product product;
-
+	@Column
+	private Integer productId;
 	@Column(nullable = false)
-	private int quantity;
-
-	// Additional columns
-	private double unitPrice; // Unit price of the product at the time of purchase
-	private double totalPrice; // Total price of the item (unitPrice * quantity)
+	private String productName;
+	@Column(nullable = false)
+	private int productQuantity;
+	private double unitPrice;
+	private double totalPrice;
 
 }
