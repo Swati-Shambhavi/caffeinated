@@ -126,7 +126,7 @@ const OrderForm = ({user, setShowOrderForm}) => {
       >
         Submit
       </button>
-      <button onClick={()=>setShowOrderForm(false)} className='bg-black text-amber-50 px-4 py-2 rounded hover:bg-slate-900 ml-4'>Go back</button>
+      <button onClick={()=>setShowOrderForm(false)} className='bg-black text-amber-50 px-4 py-2 rounded hover:bg-slate-900 ml-4'>Cancel</button>
    
       </div>
       </form>

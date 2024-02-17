@@ -5,6 +5,8 @@ import com.caffeinated.cartexpressoservice.model.ServiceResponse;
 import com.caffeinated.cartexpressoservice.service.ICartService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static net.logstash.logback.argument.StructuredArguments.kv;
@@ -17,27 +19,27 @@ public class CartController {
 	private final ICartService service;
 
 	@GetMapping("/{userId}")
-	public ServiceResponse getCartDetails(@PathVariable Integer userId) {
+	public ResponseEntity<ServiceResponse> getCartDetails(@PathVariable Integer userId) {
 		logRequestInfo("getCartDetails", userId);
 		ServiceResponse response = service.getCartDetails(userId);
 		logResponseInfo("getCartDetails", response);
-		return response;
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@PostMapping("/{userId}")
-	public ServiceResponse addToCart(@RequestBody CartItemRequest item, @PathVariable Integer userId) throws Exception {
+	public ResponseEntity<ServiceResponse> addToCart(@RequestBody CartItemRequest item, @PathVariable Integer userId) throws Exception {
 		logRequestInfo("addToCart", item);
 		ServiceResponse response = service.addToCart(userId, item);
 		logResponseInfo("addToCart", response);
-		return response;
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@DeleteMapping("/{userId}")
-	public ServiceResponse removeFromCart(@RequestBody CartItemRequest request, @PathVariable Integer userId) throws Exception {
+	public ResponseEntity<ServiceResponse> removeFromCart(@RequestBody CartItemRequest request, @PathVariable Integer userId) throws Exception {
 		logRequestInfo("removeFromCart", request);
 		ServiceResponse response = service.removeFromCart(userId, request.getProductId());
 		logResponseInfo("removeFromCart", response);
-		return response;
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	private void logRequestInfo(String methodName, Object requestData) {

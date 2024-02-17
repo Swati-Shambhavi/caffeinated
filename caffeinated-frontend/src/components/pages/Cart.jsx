@@ -7,7 +7,7 @@ import CartDetail from './CartDetail';
 const Cart = () => {
   const dispatch = useDispatch();
   const { data, operationStatus, error } = useSelector(state => state.cart);
-
+  const {userProfile} = useSelector(state=>state.user)
   useEffect(() => {
     dispatch(fetchCartDetails());
   }, [dispatch]);
@@ -28,7 +28,7 @@ const Cart = () => {
         <Emptycart/>       
       )}
       {data && data.cartItems && data.cartItems.length !== 0 && (
-        <CartDetail cart={data} onAdd={onAddCartItem} onRemove={onRemoveCartItem}/>
+        <CartDetail cart={data} onAdd={onAddCartItem} onRemove={onRemoveCartItem} user={userProfile}/>
        
       )}
     </div>

@@ -2,21 +2,21 @@ import React, { useState } from 'react'
 import CartItem from './CartItem'
 import OrderForm from './OrderForm'
 
-const CartDetail = ({cart, onAdd, onRemove}) => {
+const CartDetail = ({cart, onAdd, onRemove, user}) => {
   const [showOrderForm, setShowOrderForm] = useState(false)
   return (
     <div className='flex flex-col md:flex-row px-8 justify-between'>
         <div className=' w-full md:w-1/2'>
-            {showOrderForm ? <OrderForm user={cart.user} setShowOrderForm={setShowOrderForm}/> : 
+            {showOrderForm ? <OrderForm user={user} setShowOrderForm={setShowOrderForm}/> : 
               <div className='max-w-md mx-auto mt-8 p-4 bg-amber-800 bg-opacity-10 backdrop-filter backdrop-blur-2xl rounded'>
                 <section className='flex'>
                   <span className='flex-col justify-between'>
                   <p>Deliver To:</p>
-                  <h1>{cart.user.name}, {cart.user.address.pinCode}</h1>
-                  <p>{cart.user.address.address1}, {cart.user.address.city}, {cart.user.address.state}</p>
+                  <h1>{user.name}, {user.address.pinCode}</h1>
+                  <p>{user.address.address1}, {user.address.city}, {user.address.state}</p>
                 </span>
                 <button className='font-bold hover:cursor-pointer' onClick={()=>setShowOrderForm(prevstate=>!prevstate.showOrderForm)}>
-                    {cart.user.address.city? 'Change' : 'Add your address'}
+                    {user.address.city? 'Change' : 'Add your address'}
                     </button>
                 </section>            
                 

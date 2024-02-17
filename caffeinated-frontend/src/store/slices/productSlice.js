@@ -167,7 +167,7 @@ const productSlice = createSlice({
       const existingProduct = state.data[productId];
       if (existingProduct) {
         // Product already in state, return it
-        state.operationStatus = 'success';
+        state.operationStatus = 'fulfilled';
         state.error = null;
       } else {
         // Product not in state, trigger fetchProductItem
@@ -186,11 +186,11 @@ const productSlice = createSlice({
         products.forEach((product) => {
           state.data[product.id] = product;
         });
-        state.operationStatus = 'success';
+        state.operationStatus = 'fulfilled';
         state.error = null;
       })
       .addCase(fetchAllProducts.rejected, (state, action) => {
-        state.operationStatus = 'fail';
+        state.operationStatus = 'rejected';
         state.error = action.payload.error;
       })
       .addCase(fetchProductItem.pending, (state) => {
@@ -199,11 +199,11 @@ const productSlice = createSlice({
       .addCase(fetchProductItem.fulfilled, (state, action) => {
         const newProduct = action.payload.data;
         state.data[newProduct.id] = newProduct;
-        state.operationStatus = 'success';
+        state.operationStatus = 'fulfilled';
         state.error = null;
       })
       .addCase(fetchProductItem.rejected, (state, action) => {
-        state.operationStatus = 'fail';
+        state.operationStatus = 'rejected';
         state.error = action.payload.error;
       })
       .addCase(addProduct.fulfilled, (state, action) => {

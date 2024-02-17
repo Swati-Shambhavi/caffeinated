@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setAccessTokenAsync, clearUser } from '../store/slices/userSlice';
+import { setUserAuth, setAccessTokenAsync, clearUserAuth } from '../store/slices/userSlice';
 import { useKeycloak } from '@react-keycloak/web';
 
 const AuthWrapper = () => {
@@ -16,23 +16,23 @@ const AuthWrapper = () => {
       try {
         if (initialized && keycloak.authenticated) {
           const userEmail = keycloak.idTokenParsed.email;
-          const userData = { user: { username: keycloak.idTokenParsed.preferred_username,
+          const userData = { userAuth: { username: keycloak.idTokenParsed.preferred_username,
           email: userEmail } };
           console.log("fromm comp",userData)
-          dispatch(setUser(userData.user));
+          dispatch(setUserAuth(userData.userAuth));
 
           const accessToken = keycloak.token;
           await dispatch(setAccessTokenAsync(accessToken)); 
 
         } else {
-          dispatch(clearUser());
+          dispatch(clearUserAuth());
           if (!keycloak.loginCalled) {
             keycloak.onAuthSuccess = () => {
               const userEmail = keycloak.idTokenParsed.email;
-              const userData = { user: { username: keycloak.idTokenParsed.preferred_username,
+              const userData = { userAuth: { username: keycloak.idTokenParsed.preferred_username,
               email:userEmail } };
               console.log("fromm comp",userData)
-              dispatch(setUser(userData.user));
+              dispatch(setUserAuth(userData.userAuth));
 
               const accessToken = keycloak.token;
               dispatch(setAccessTokenAsync(accessToken));
@@ -42,7 +42,7 @@ const AuthWrapper = () => {
         }
       } catch (error) {
         console.error('Keycloak initialization failed:', error);
-        dispatch(clearUser());
+        dispatch(clearUserAuth());
         navigate('/');
       } finally {
         setLoading(false);

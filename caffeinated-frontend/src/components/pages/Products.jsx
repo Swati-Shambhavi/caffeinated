@@ -20,7 +20,7 @@ const Products = () => {
           <div className='flex-col'>
             <h1 className='font-kalnia text-4xl m-4 text-center'>{`Products related to ${selectedCategory.name}`}</h1>
             <div className='flex flex-wrap justify-evenly'>
-            {selectedCategory.products.map(product => <ProductItem product={product} image={getImagePath(product.name)}/>)}
+            {selectedCategory.products.map(product => <ProductItem product={product} key={product.id} image={getImagePath(product.name)}/>)}
             </div>
           </div>
         ) : (

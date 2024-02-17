@@ -2,7 +2,7 @@ import { useKeycloak } from '@react-keycloak/web';
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { isAdmin } from '../utility/isAdminUser';
-import { ShoppingBagIcon, UserCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
@@ -26,7 +26,8 @@ const Navigation = () => {
   const handleLogoutClick = (event) => {
     event.preventDefault();
     console.log('Logout button clicked');
-    keycloak.logout();
+    const redirectUri = window.location.origin + '/';  
+    keycloak.logout({ redirectUri });
   };
 
   const [scrolling, setScrolling] = useState(false);

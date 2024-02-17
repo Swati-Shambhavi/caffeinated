@@ -1,7 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../../store/slices/cartSlice';
 import { useKeycloak } from '@react-keycloak/web';
+import { setUserAuth } from '../../store/slices/userSlice';
+import { addToCart } from '../../store/slices/cartSlice';
 
 const ProductItem = ({ product, image }) => {
   const dispatch = useDispatch();
@@ -10,13 +11,14 @@ const ProductItem = ({ product, image }) => {
 
   const addToCartHandler = async () => {
     if(!isAuthenticated){
+      dispatch(clearUserAuth());
       console.log("User needs to be authenticated before adding anything to cart")
       keycloak.onAuthSuccess = () => {
         const userEmail = keycloak.idTokenParsed.email;
         const userData = { user: { username: keycloak.idTokenParsed.preferred_username,
         email:userEmail } };
         console.log("fromm comp",userData)
-        dispatch(setUser(userData.user));
+        dispatch(setUserAuth(userData.user));
         const accessToken = keycloak.token;
         dispatch(setAccessTokenAsync(accessToken));
       };

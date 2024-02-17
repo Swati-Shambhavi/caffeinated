@@ -7,15 +7,15 @@ export const fetchCartDetails = createAsyncThunk(
   async (_, { getState }) => {
     try {
       const { user } = getState();
-      const userEmail = user.user?.email;
-      console.log('inside cart slice', userEmail);
-      if (!userEmail) {
-        throw new Error('User email not found.');
+      const userId = user.userProfile?.id;
+      console.log('inside cart slice', userId);
+      if (!userId) {
+        throw new Error('User id not found.');
       }
 
       const accessToken = user.accessToken;
       const url = `http://localhost:8080/caffeinated/carts/api/${encodeURIComponent(
-        userEmail
+        userId
       )}`;
 
       const response = await axios.get(url, {
@@ -26,7 +26,7 @@ export const fetchCartDetails = createAsyncThunk(
 
       console.log('raw response', response);
 
-      if (!response.status === 200) {
+      if (response.status !== 200) {
         console.error('Error response from server:', response.data);
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -44,14 +44,14 @@ export const addToCart = createAsyncThunk(
   async (cartDetail, { getState }) => {
     try {
       const { user } = getState();
-      const userEmail = user.user?.email;
-      if (!userEmail) {
-        throw new Error('User email not found.');
+      const userId = user.userProfile?.id;
+      if (!userId) {
+        throw new Error('User id not found.');
       }
 
       const accessToken = user.accessToken;
       const url = `http://localhost:8080/caffeinated/carts/api/${encodeURIComponent(
-        userEmail
+        userId
       )}`;
 
       const response = await axios.post(url, cartDetail, {
@@ -63,12 +63,12 @@ export const addToCart = createAsyncThunk(
 
       console.log('raw response', response);
 
-      if (response.status !== 200) {
-        console.error('Error response from server:', response.data);
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      if (response.status >= 200 && response.status < 300) {
+        console.log('Response data in addToCart', response.data);
+        return response.data;
       }
-
-      return response.data;
+      console.error('Error response from server:', response.data);
+      throw new Error(`HTTP error! Status: ${response.status}`);
     } catch (error) {
       console.error('Error adding to cart:', error);
       throw new Error('Error adding to cart. Please try again.');
@@ -81,9 +81,9 @@ export const removeFromCart = createAsyncThunk(
   async (cartDetail, { getState }) => {
     try {
       const { user } = getState();
-      const userEmail = user.user?.email;
-      if (!userEmail) {
-        throw new Error('User email not found.');
+      const userId = user.userProfile?.id;
+      if (!userId) {
+        throw new Error('User id not found.');
       }
 
       const productId =
@@ -93,11 +93,11 @@ export const removeFromCart = createAsyncThunk(
 
       const accessToken = user.accessToken;
       const url = `http://localhost:8080/caffeinated/carts/api/${encodeURIComponent(
-        userEmail
+        userId
       )}`;
 
       const response = await axios.delete(url, {
-        data: productId, // Send productId as part of the request body
+        data: productId,
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
@@ -106,12 +106,12 @@ export const removeFromCart = createAsyncThunk(
 
       console.log('raw response', response);
 
-      if (response.status !== 200) {
-        console.error('Error response from server:', response.data);
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      if (response.status >= 200 && response.status < 300) {
+        console.log('Response data in removeFromCart', response.data);
+        return response.data;
       }
-
-      return response.data;
+      console.error('Error response from server:', response.data);
+      throw new Error(`HTTP error! Status: ${response.status}`);
     } catch (error) {
       console.error('Error removing from cart:', error);
       throw new Error('Error removing from cart. Please try again.');
@@ -125,7 +125,7 @@ export const updateCartUser = createAsyncThunk(
     try {
       const { user } = getState();
       console.log('user', user);
-      const userEmail = user.user?.email;
+      const userEmail = user.userAuth?.email;
       if (!userEmail) {
         throw new Error('User email not found.');
       }
@@ -164,7 +164,7 @@ const cartSlice = createSlice({
       id: '',
       cartItems: [],
       totalPrice: '',
-      user: '',
+      userId: '',
     },
     operationStatus: '',
     error: null,

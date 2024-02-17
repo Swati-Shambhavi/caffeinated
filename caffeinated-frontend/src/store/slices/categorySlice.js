@@ -111,9 +111,6 @@ const categorySlice = createSlice({
   name: 'categories',
   initialState,
   reducers: {
-    // setSelectedCategory: (state, action) => {
-    //   state.selectedCategory = action.payload;
-    // },
     fetchCategoryById: (state, action) => {
       const categoryId = action.payload.categoryId;
       const category = state.data.find((category) => category.id == categoryId);
@@ -126,12 +123,12 @@ const categorySlice = createSlice({
         state.operationStatus = 'pending';
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
-        state.operationStatus = 'success';
+        state.operationStatus = 'fulfilled';
         state.data = action.payload.data;
         state.error = null;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
-        state.operationStatus = 'fail';
+        state.operationStatus = 'rejected';
         state.error = action.error.message;
       })
       .addCase(addCategory.fulfilled, (state, action) => {
