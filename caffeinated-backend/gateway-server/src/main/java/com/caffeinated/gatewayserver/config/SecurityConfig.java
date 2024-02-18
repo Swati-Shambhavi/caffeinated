@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges ->  exchanges
                         .pathMatchers(HttpMethod.GET, "/caffeinated/categories/**").permitAll()
                         .pathMatchers(HttpMethod.GET, "/caffeinated/products/**").permitAll()
+                        .pathMatchers("/caffeinated/orders/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/caffeinated/categories/**").hasRole("ADMIN")
                         .pathMatchers("/caffeinated/products/**").permitAll()
                         .pathMatchers("/caffeinated/carts/**").authenticated()

@@ -52,7 +52,9 @@ feign:
     config:
       default:
         loggerLevel: FULL
-
+razorpay-config:
+  keyId: ${RAZORPAY_ID}
+  keySecret: ${RAZORPAY_SECRET}
 service-config:
   externalServiceException:
     code: 7000
@@ -67,4 +69,6 @@ service-config:
     productCraftsmanService:
       code: 700001
       description: Error from the Products Craftsman Service
+
+
 

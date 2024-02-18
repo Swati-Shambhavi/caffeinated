@@ -1,6 +1,6 @@
 package com.caffeinated.cartexpressoservice.repo;
 
-import com.caffeinated.cartexpressoservice.entity.Cart;
+import com.caffeinated.cartexpressoservice.entity.cart.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

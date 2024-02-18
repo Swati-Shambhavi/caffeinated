@@ -1,4 +1,4 @@
-package com.caffeinated.cartexpressoservice.model;
+package com.caffeinated.cartexpressoservice.model.cart;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;

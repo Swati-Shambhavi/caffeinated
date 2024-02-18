@@ -1,6 +1,7 @@
-package com.caffeinated.cartexpressoservice.entity;
+package com.caffeinated.cartexpressoservice.entity.cart;
 
 
+import com.caffeinated.cartexpressoservice.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 

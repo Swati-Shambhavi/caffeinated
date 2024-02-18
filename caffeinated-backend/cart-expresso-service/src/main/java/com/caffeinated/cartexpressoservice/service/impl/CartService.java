@@ -1,8 +1,9 @@
 package com.caffeinated.cartexpressoservice.service.impl;
 import com.caffeinated.cartexpressoservice.config.ServiceConfig;
-import com.caffeinated.cartexpressoservice.entity.Cart;
-import com.caffeinated.cartexpressoservice.entity.CartItem;
+import com.caffeinated.cartexpressoservice.entity.cart.Cart;
+import com.caffeinated.cartexpressoservice.entity.cart.CartItem;
 import com.caffeinated.cartexpressoservice.model.*;
+import com.caffeinated.cartexpressoservice.model.cart.CartItemRequest;
 import com.caffeinated.cartexpressoservice.model.externalservice.ProductResponseData;
 import com.caffeinated.cartexpressoservice.repo.CartRepository;
 import com.caffeinated.cartexpressoservice.service.ICartService;

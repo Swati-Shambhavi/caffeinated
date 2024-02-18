@@ -1,6 +1,6 @@
 package com.caffeinated.cartexpressoservice.controller;
 
-import com.caffeinated.cartexpressoservice.model.CartItemRequest;
+import com.caffeinated.cartexpressoservice.model.cart.CartItemRequest;
 import com.caffeinated.cartexpressoservice.model.ServiceResponse;
 import com.caffeinated.cartexpressoservice.service.ICartService;
 import lombok.AllArgsConstructor;

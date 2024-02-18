@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @EnableFeignClients
 public class CartExpressoServiceApplication {
-
 	public static void main(String[] args) {
+
 		SpringApplication.run(CartExpressoServiceApplication.class, args);
 	}
 
