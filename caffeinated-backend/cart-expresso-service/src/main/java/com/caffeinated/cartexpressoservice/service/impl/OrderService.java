@@ -9,6 +9,8 @@ import com.caffeinated.cartexpressoservice.entity.order.OrderPayment;
 import com.caffeinated.cartexpressoservice.exception.ResourceNotFoundException;
 import com.caffeinated.cartexpressoservice.model.*;
 import com.caffeinated.cartexpressoservice.model.order.*;
+import com.caffeinated.cartexpressoservice.queue.ProductUpdateMessage;
+import com.caffeinated.cartexpressoservice.queue.ProductUpdateMessageSender;
 import com.caffeinated.cartexpressoservice.repo.CartRepository;
 import com.caffeinated.cartexpressoservice.repo.OrderPaymentRepository;
 import com.caffeinated.cartexpressoservice.repo.OrderRepository;
@@ -26,6 +28,9 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +42,7 @@ public class OrderService implements IOrderService {
     private CartRepository cartRepo;
     private OrderRepository orderRepository;
     private OrderPaymentRepository orderPaymentRepository;
+    private ProductUpdateMessageSender productUpdateMessageSender;
 
     @Override
     public ServiceResponse createOrder(CreateOrderRequest orderRequest) throws RazorpayException {
@@ -53,7 +59,7 @@ public class OrderService implements IOrderService {
     public ServiceResponse orderConfirmation(OrderConfirmationRequest orderRequest, Integer userId) {
         if (verifyRazorpaySignature(orderRequest.getRazorpayOrderId(), orderRequest.getRazorpayPaymentId(), orderRequest.getRazorpaySignature())) {
             Order savedOrder = removeItemsFromCartAndAddToOrder(userId, orderRequest);
-            //update the product stock quantity
+            sendProductStockUpdateMsg(savedOrder);
             return ServiceResponse.builder().data(OrderConfirmationResponse.builder().isOrderConfirmed(true).orderDetails(MapMeUp.toOrderDetails(savedOrder)).build()).build();
         } else {
             return ServiceResponse.builder().data(OrderConfirmationResponse.builder().isOrderConfirmed(false).build()).build();
@@ -89,6 +95,14 @@ public class OrderService implements IOrderService {
         cart.setTotalPrice(0d);
         cartRepo.save(cart);
         return savedOrder;
+    }
+    private void sendProductStockUpdateMsg(Order savedOrder) {
+        for (OrderItem orderItem : savedOrder.getOrderItems()) {
+            ProductUpdateMessage updateMessage = new ProductUpdateMessage();
+            updateMessage.setProductId(orderItem.getProductId());
+            updateMessage.setQuantity(orderItem.getProductQuantity());
+            productUpdateMessageSender.sendProductUpdateMessage(updateMessage);
+        }
     }
 
     private List<OrderItem> mapOrderItems(List<CartItem> cartItems, Order order) {

@@ -10,10 +10,12 @@ import com.caffeinated.productcraftsmanservice.entity.Product;
 import com.caffeinated.productcraftsmanservice.dto.ProductRequest;
 import com.caffeinated.productcraftsmanservice.dto.ServiceResponse;
 import com.caffeinated.productcraftsmanservice.exception.ResourceNotFoundException;
+import com.caffeinated.productcraftsmanservice.queue.ProductStockUpdateMessage;
 import com.caffeinated.productcraftsmanservice.repo.CategoryRepository;
 import com.caffeinated.productcraftsmanservice.repo.ProductRepository;
 import com.caffeinated.productcraftsmanservice.service.IProductService;
 import com.caffeinated.productcraftsmanservice.util.MapMeUp;
+import static net.logstash.logback.argument.StructuredArguments.kv;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -94,6 +96,14 @@ public class ProductService implements IProductService {
 		}
 		mapUpdateProductDetails(productRequest, product, category);
 		return ServiceResponse.builder().data(MapMeUp.toProductResponse(productRepo.save(product))).build();
+	}
+
+	@Override
+	public void updateProductStock(ProductStockUpdateMessage message) {
+		Product product = productRepo.findById(message.getProductId()).get();
+		product.setStockQuantity(product.getStockQuantity()-message.getQuantity());
+		Product savedProduct = productRepo.save(product);
+		log.info("Product's stock got updated {}",kv("savedProduct",savedProduct));
 	}
 
 	private void mapUpdateProductDetails(ProductRequest dto, Product product, Category category)  {

@@ -19,6 +19,10 @@ spring:
     openfeign:
       circuitbreaker:
         enabled: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+
 management:
   endpoints:
     web:
@@ -52,6 +56,7 @@ feign:
     config:
       default:
         loggerLevel: FULL
+
 razorpay-config:
   keyId: ${RAZORPAY_ID}
   keySecret: ${RAZORPAY_SECRET}
