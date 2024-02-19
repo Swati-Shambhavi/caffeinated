@@ -75,7 +75,7 @@ const Navigation = () => {
             Caffeinated
           </Link>
         </li>
-        <div className='flex space-x-10 p-8 font-playfair-display font-semibold'>
+        <div className='flex space-x-10 p-6 font-playfair-display font-semibold'>
           <li className='hover:cursor-pointer'>
             <Link to='/categories' className='btn-link'>
               <span className=''>Shop</span>

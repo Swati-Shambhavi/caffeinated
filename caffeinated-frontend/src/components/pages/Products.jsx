@@ -19,7 +19,7 @@ const Products = () => {
     <div className='mt-24'>
       {selectedCategory ? (
         <div className='flex-col'>
-          <h1 className='font-kalnia text-4xl m-4 text-center'>{`Products related to ${selectedCategory.name}`}</h1>
+          <h1 className='font-kalnia text-4xl m-4 text-center'>{`Products of ${selectedCategory.name}`}</h1>
           <div className='flex flex-wrap justify-evenly'>
             {selectedCategory.products.map((product) => (
               <ProductItem

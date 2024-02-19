@@ -1,31 +1,46 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useKeycloak } from '@react-keycloak/web';
-import { setUserAuth } from '../../store/slices/userSlice';
-import { addToCart } from '../../store/slices/cartSlice';
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useKeycloak } from '@react-keycloak/web'
+import { setUserAuth } from '../../store/slices/userSlice'
+import { addToCart } from '../../store/slices/cartSlice'
 
 const ProductItem = ({ product, image }) => {
-  const dispatch = useDispatch();
-  const {isAuthenticated} = useSelector(state => state.user)
-  const { keycloak, initialized } = useKeycloak();
+  const dispatch = useDispatch()
+  const { isAuthenticated } = useSelector((state) => state.user)
+  const { keycloak, initialized } = useKeycloak()
+  const [buttonClicked, setButtonClicked] = useState(false)
 
   const addToCartHandler = async () => {
-    if(!isAuthenticated){
-      dispatch(clearUserAuth());
-      console.log("User needs to be authenticated before adding anything to cart")
+    setButtonClicked(true)
+
+    if (!isAuthenticated) {
+      dispatch(clearUserAuth())
+      console.log(
+        'User needs to be authenticated before adding anything to cart'
+      )
       keycloak.onAuthSuccess = () => {
-        const userEmail = keycloak.idTokenParsed.email;
-        const userData = { user: { username: keycloak.idTokenParsed.preferred_username,
-        email:userEmail } };
-        console.log("fromm comp",userData)
-        dispatch(setUserAuth(userData.user));
-        const accessToken = keycloak.token;
-        dispatch(setAccessTokenAsync(accessToken));
-      };
-      await keycloak.login();
+        const userEmail = keycloak.idTokenParsed.email
+        const userData = {
+          user: {
+            username: keycloak.idTokenParsed.preferred_username,
+            email: userEmail,
+          },
+        }
+        console.log('fromm comp', userData)
+        dispatch(setUserAuth(userData.user))
+        const accessToken = keycloak.token
+        dispatch(setAccessTokenAsync(accessToken))
+      }
+      await keycloak.login()
     }
-    console.log("Add to cart", {"productId": product.id, "quantity": 1});
-    dispatch(addToCart({"productId": product.id, "quantity": 1}));
+
+    console.log('Add to cart', { productId: product.id, quantity: 1 })
+    dispatch(addToCart({ productId: product.id, quantity: 1 }))
+
+    // Reset the buttonClicked state after a delay to allow users to see the click animation
+    setTimeout(() => {
+      setButtonClicked(false)
+    }, 500)
   }
 
   return (
@@ -34,7 +49,7 @@ const ProductItem = ({ product, image }) => {
         className='image-container'
         style={{
           width: '100%',
-          height: '200px', // Define your desired height
+          height: '200px',
           overflow: 'hidden',
           position: 'relative',
         }}
@@ -58,11 +73,16 @@ const ProductItem = ({ product, image }) => {
         <span>{product.quantity} 500g</span>
         <span>Stock ({product.stockQuantity})</span>
       </div>
-      <button onClick={addToCartHandler} className='w-full bg-amber-500 p-2.5 rounded-md mt-4'>
-        Add to Cart
+      <button
+        onClick={addToCartHandler}
+        className={`w-full bg-amber-500 p-2.5 rounded-md mt-4 ${
+          buttonClicked ? 'transform scale-95' : ''
+        } transition-transform duration-300 ease-in-out`}
+      >
+        {buttonClicked ? 'Adding to Cart...' : 'Add to Cart'}
       </button>
     </div>
-  );
+  )
 }
 
-export default ProductItem;
+export default ProductItem

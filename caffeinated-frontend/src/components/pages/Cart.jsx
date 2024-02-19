@@ -53,7 +53,7 @@ const Cart = () => {
         handler: function (response) {
           console.log('Response after successful payment', response)
           dispatch(sendPaymentConfirmation(response))
-          navigate('/user/order-confirmation')
+          navigate('/user/order')
         },
       }
       const razorpayInstance = new Razorpay(options)

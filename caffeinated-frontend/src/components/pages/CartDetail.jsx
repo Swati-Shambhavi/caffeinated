@@ -50,7 +50,7 @@ const CartDetail = ({ cart, onAdd, onRemove, user, onPlaceOrder }) => {
           </h1>
           <button
             onClick={() => onPlaceOrder(cart.totalPrice)}
-            className='p-2 m-2 bg-black text-amber-50 w-2/3 rounded'
+            className='p-2 m-2 bg-black text-amber-50 w-2/3 rounded transition-all duration-300 ease-in-out hover:bg-gray-800'
           >
             Place your Order
           </button>

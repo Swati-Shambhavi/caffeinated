@@ -13,7 +13,7 @@ const DisplayEmpty = ({ displayText }) => {
       <p className='font-serif text-lg text-center'>
         {displayText}! Go ahead and explore our delicacies.
       </p>
-      <Link to='/'>
+      <Link to='/categories'>
         <button className='mt-2 bg-black text-amber-50 p-2 rounded w-full text-center mx-auto'>
           View products
         </button>
