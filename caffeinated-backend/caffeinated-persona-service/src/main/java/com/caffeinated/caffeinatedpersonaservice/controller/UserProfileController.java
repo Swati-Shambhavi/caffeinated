@@ -19,10 +19,7 @@ import static net.logstash.logback.argument.StructuredArguments.kv;
 public class UserProfileController {
     private final IUserProfileService service;
 
-//    @PostMapping("/register")
-//    public void addNewUser(@RequestBody UserRegistrationRequest userRequest) {
-//        log.info("User Registration invoked {}", kv("userRequest", userRequest));
-//    }
+
 
     @GetMapping("/{email}")
     public ServiceResponse getUserDetail(@PathVariable String email) {

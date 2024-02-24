@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 
 const EmbedGenarativeAi = () => {
   const key = ''
+  const [isLoading, setIsLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [genAiResponse, setGenAiResponse] = useState({
     isSearchOffensive: false,
@@ -21,12 +22,13 @@ const EmbedGenarativeAi = () => {
     ],
   }
   const handleSearchEvent = async (event) => {
+    setIsLoading(true)
     const responseStructureDetail =
       ' Prepare the response in 2 sections. first section should be list of ingredients seperated by -. second secion should be list of steps to prepare the recipe, seperated by -. please adhere to the asked response structure'
     event.preventDefault()
     console.log(searchText)
-    requestData.contents[0].parts[0].text =
-      'How to make' + searchText + responseStructureDetail
+    requestData.contents[0].parts[0].text = searchText
+    // 'How to make' + searchText + responseStructureDetail
     console.log(requestData)
     let response = null
     try {
@@ -42,6 +44,7 @@ const EmbedGenarativeAi = () => {
       )
       console.log('response=', response)
       const data = await response.data
+      setIsLoading(false)
       if (
         'promptFeedback' in data &&
         data.promptFeedback.hasOwnProperty('blockReason')
@@ -72,6 +75,7 @@ const EmbedGenarativeAi = () => {
   }
   return (
     <div className='p-8 border-t border-b border-black'>
+      {isLoading && <h1>Loading</h1>}
       <div className='m-4 flex align-baseline justify-center'>
         <h3 className='pt-2'>How to make</h3>
         <input

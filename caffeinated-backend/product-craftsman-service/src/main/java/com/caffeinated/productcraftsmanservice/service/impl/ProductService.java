@@ -1,26 +1,28 @@
 package com.caffeinated.productcraftsmanservice.service.impl;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import com.caffeinated.productcraftsmanservice.dto.ProductResponse;
+import com.caffeinated.productcraftsmanservice.dto.*;
 import com.caffeinated.productcraftsmanservice.entity.Category;
 import com.caffeinated.productcraftsmanservice.entity.Product;
-import com.caffeinated.productcraftsmanservice.dto.ProductRequest;
-import com.caffeinated.productcraftsmanservice.dto.ServiceResponse;
 import com.caffeinated.productcraftsmanservice.exception.ResourceNotFoundException;
 import com.caffeinated.productcraftsmanservice.queue.ProductStockUpdateMessage;
 import com.caffeinated.productcraftsmanservice.repo.CategoryRepository;
 import com.caffeinated.productcraftsmanservice.repo.ProductRepository;
 import com.caffeinated.productcraftsmanservice.service.IProductService;
+import com.caffeinated.productcraftsmanservice.util.AiResponseMapper;
 import com.caffeinated.productcraftsmanservice.util.MapMeUp;
 import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import io.micrometer.common.util.StringUtils;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +30,7 @@ import io.micrometer.common.util.StringUtils;
 public class ProductService implements IProductService {
 	private ProductRepository productRepo;
 	private CategoryRepository categoryRepo;
+	private final WebClient webClient;
 
 	public ServiceResponse getAllProducts() {
 		ServiceResponse response = ServiceResponse.builder().build();
@@ -105,7 +108,54 @@ public class ProductService implements IProductService {
 		Product savedProduct = productRepo.save(product);
 		log.info("Product's stock got updated {}",kv("savedProduct",savedProduct));
 	}
+	@Override
+	public CustomizedProductResponse customizeProduct(ProductCustomizationRequest request) {
+		String key = "AIzaSyAqy5ng0jmM-QURmhlNcZAHUXePV6GECvE";
+		String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + key;
+		Map<String, Object> requestData = createRequestData(request);
+		log.info("Request Data: {}", requestData);
+		CustomizedProductResponse mappedResponse=null;
+		try {
+			String responseBody = webClient.post()
+					.uri(apiUrl)
+					.header("Content-Type", "application/json")
+					.body(BodyInserters.fromValue(requestData))
+					.retrieve()
+					.bodyToMono(String.class)
+					.block();
 
+			log.info("Raw Response Data: {}", responseBody);
+			mappedResponse = AiResponseMapper.mapToCustomizedProductResponse(responseBody);
+
+			log.info("Mapped Response Data: {}", mappedResponse);
+
+
+		} catch (WebClientResponseException.BadRequest ex) {
+			log.error("Bad Request Exception: {}", ex.getResponseBodyAsString());
+			throw ex;
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		return mappedResponse;
+	}
+
+	private Map<String, Object> createRequestData(ProductCustomizationRequest request) {
+		Map<String, Object> requestData = new HashMap<>();
+		requestData.put("contents", List.of(
+				Map.of("parts", Collections.singletonList(
+						Map.of("text", String.format(
+								"Create a customized food product that provides %s. It should be %s and %s. The format should be %s with a caffeine level of %s. Ideally, it should stay within a budget of %s (optional).\n\nProvide the response in the following format:\n\n* Product Name: [ProductName]\n* Product Description: [ProductDescription]\n* Image URL: [ImageUrl]\n* Ingredients: [Ingredients]\n* Caffeine Content: [CaffeineContent]\n* Recipe: [Recipe]. \nMake sure to not use any unnecessary special characters. \nUse only * to separate the required response data levels. Use only # to list down the different parts within Ingredients. \nUse only | symbol to list down the different steps within Recipe section. \n Important note is that do not use any other special character or numbers for listing.",
+								String.join(", ", request.getDesiredEffects()),
+								String.join(", ", request.getPreferredFlavors()),
+								String.join(", ", request.getDietaryRestrictions()),
+								request.getDesiredFormat(),
+								request.getCaffeineLevel(),
+								request.getBudget() != null ? "within " + request.getBudget() + " budget" : "unspecified budget"
+						))
+				))
+		));
+		return requestData;
+	}
 	private void mapUpdateProductDetails(ProductRequest dto, Product product, Category category)  {
 		if (category != null) {
 			product.setCategory(category);

@@ -1,10 +1,13 @@
 package com.caffeinated.productcraftsmanservice.controller;
 
+import com.caffeinated.productcraftsmanservice.dto.CustomizedProductResponse;
+import com.caffeinated.productcraftsmanservice.dto.ProductCustomizationRequest;
 import com.caffeinated.productcraftsmanservice.dto.ProductRequest;
 import com.caffeinated.productcraftsmanservice.dto.ServiceResponse;
 import com.caffeinated.productcraftsmanservice.service.IProductService;
 import com.caffeinated.productcraftsmanservice.validation.PostValidation;
 import com.caffeinated.productcraftsmanservice.validation.PutValidation;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +61,12 @@ public class ProductController {
 		logRequestInfo("updateProduct", product);
 		ServiceResponse response = productService.updateProduct(productId, product);
 		logResponseInfo("updateProduct", response);
+		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/customize")
+	public ResponseEntity<CustomizedProductResponse> customizeProduct(@RequestBody @Valid ProductCustomizationRequest request) {
+		CustomizedProductResponse response = productService.customizeProduct(request);
 		return ResponseEntity.ok(response);
 	}
 

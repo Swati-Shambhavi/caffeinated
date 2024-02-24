@@ -1,5 +1,7 @@
 package com.caffeinated.productcraftsmanservice.service;
 
+import com.caffeinated.productcraftsmanservice.dto.CustomizedProductResponse;
+import com.caffeinated.productcraftsmanservice.dto.ProductCustomizationRequest;
 import com.caffeinated.productcraftsmanservice.dto.ProductRequest;
 import com.caffeinated.productcraftsmanservice.dto.ServiceResponse;
 import com.caffeinated.productcraftsmanservice.queue.ProductStockUpdateMessage;
@@ -11,4 +13,6 @@ public interface IProductService {
      ServiceResponse deleteProduct(Integer productId) throws Exception;
      ServiceResponse updateProduct(Integer productId, ProductRequest productRequest) throws Exception;
      void updateProductStock(ProductStockUpdateMessage message);
-    }
+
+    CustomizedProductResponse customizeProduct(ProductCustomizationRequest request);
+}

@@ -74,6 +74,7 @@ const Home = () => {
           </p>
         </section>
         <Categories style='mt-2' />
+        <EmbedGenarativeAi />
       </div>
       {/* <div>
         

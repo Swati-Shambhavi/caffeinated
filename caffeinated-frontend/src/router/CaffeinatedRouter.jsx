@@ -24,9 +24,9 @@ import OrderDetail from '../components/pages/OrderDetail'
 
 const CaffeinatedRouter = () => {
   const { initialized, keycloak } = useKeycloak()
-  if (!initialized) {
-    return <h3>Loading ... !!!</h3>
-  }
+  // if (!initialized) {
+  //   return <h3>Loading ... !!!</h3>
+  // }
 
   const router = createBrowserRouter([
     {
