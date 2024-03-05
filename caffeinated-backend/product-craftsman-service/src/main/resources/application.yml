@@ -40,4 +40,4 @@ openai:
   image-generator:
     host: https://api.openai.com
     endpoint: /v1/images/generations
-    api-key: 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
+    api-key: ${OPEN_AI_API_KEY}
