@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.caffeinated.productcraftsmanservice.dto.*;
+import com.caffeinated.productcraftsmanservice.dto.openapi.GenerateImageRequest;
+import com.caffeinated.productcraftsmanservice.dto.openapi.GenerateImageResponse;
 import com.caffeinated.productcraftsmanservice.entity.Category;
 import com.caffeinated.productcraftsmanservice.entity.Product;
 import com.caffeinated.productcraftsmanservice.exception.ResourceNotFoundException;
@@ -11,6 +13,7 @@ import com.caffeinated.productcraftsmanservice.queue.ProductStockUpdateMessage;
 import com.caffeinated.productcraftsmanservice.repo.CategoryRepository;
 import com.caffeinated.productcraftsmanservice.repo.ProductRepository;
 import com.caffeinated.productcraftsmanservice.service.IProductService;
+import com.caffeinated.productcraftsmanservice.service.client.ImageGeneratorFeignClient;
 import com.caffeinated.productcraftsmanservice.util.AiResponseMapper;
 import com.caffeinated.productcraftsmanservice.util.MapMeUp;
 import static net.logstash.logback.argument.StructuredArguments.kv;
@@ -31,6 +34,7 @@ public class ProductService implements IProductService {
 	private ProductRepository productRepo;
 	private CategoryRepository categoryRepo;
 	private final WebClient webClient;
+	private final ImageGeneratorFeignClient imageGenerator;
 
 	public ServiceResponse getAllProducts() {
 		ServiceResponse response = ServiceResponse.builder().build();
@@ -114,7 +118,10 @@ public class ProductService implements IProductService {
 		String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + key;
 		Map<String, Object> requestData = createRequestData(request);
 		log.info("Request Data: {}", requestData);
-		CustomizedProductResponse mappedResponse=null;
+		CustomizedProductResponse mappedResponse = null;
+
+		long startTime = System.currentTimeMillis();
+
 		try {
 			String responseBody = webClient.post()
 					.uri(apiUrl)
@@ -124,17 +131,34 @@ public class ProductService implements IProductService {
 					.bodyToMono(String.class)
 					.block();
 
+			long endTime = System.currentTimeMillis();
+
 			log.info("Raw Response Data: {}", responseBody);
 			mappedResponse = AiResponseMapper.mapToCustomizedProductResponse(responseBody);
 
 			log.info("Mapped Response Data: {}", mappedResponse);
 
+			long duration = endTime - startTime;
+			log.info("Gemini API call took {} milliseconds", duration);
 
 		} catch (WebClientResponseException.BadRequest ex) {
 			log.error("Bad Request Exception: {}", ex.getResponseBodyAsString());
 			throw ex;
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		if(false && null!=mappedResponse){
+			GenerateImageRequest imageGeneratorRequest = GenerateImageRequest.builder()
+					.prompt(mappedResponse.getProductDescription())
+					.numImages(1)
+					.size("512x512")
+					.build();
+			try{
+				GenerateImageResponse response = imageGenerator.generateImage(imageGeneratorRequest);
+				mappedResponse.setImageUrl(response.getData().get(0).getUrl());
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 		}
 		return mappedResponse;
 	}

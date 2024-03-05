@@ -1,8 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { FaMugHot, FaPalette, FaCube } from 'react-icons/fa'
-import EmbedGenarativeAi from './EmbedGenarativeAi'
 import Categories from './pages/Categories'
+import CustomizeYourProduct from './pages/CustomizeYourProduct'
 
 const Home = () => {
   return (
@@ -73,13 +73,9 @@ const Home = () => {
             and unparalleled coffee experience. No two cups are the same!
           </p>
         </section>
+        <CustomizeYourProduct />
         <Categories style='mt-2' />
-        <EmbedGenarativeAi />
       </div>
-      {/* <div>
-        
-        <EmbedGenarativeAi />
-      </div> */}
     </>
   )
 }

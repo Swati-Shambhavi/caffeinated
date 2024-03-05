@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.flashy-amber-button {
+    @apply bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded-full transition duration-300;
+    animation: glowing 1300ms infinite;
+  }
+  
+  @keyframes glowing {
+    0% {
+      background-color: #ffcc00; /* Amber 500 */
+      box-shadow: 0 0 5px #ffcc00;
+    }
+    50% {
+      background-color: #ff9900; /* Amber 700 */
+      box-shadow: 0 0 20px #ff9900;
+    }
+    100% {
+      background-color: #ffcc00; /* Amber 500 */
+      box-shadow: 0 0 5px #ffcc00;
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes shine {
+    to {
+      background-position: 200% center;
+    }
+  }
+
+  
+  

@@ -63,10 +63,10 @@ const Navigation = () => {
     >
       <ul
         className={`flex justify-between font-s ${
-          scrolling || !isHome ? ' border-b border-solid border-black' : ''
+          scrolling || !isHome ? ' border-b border-solid border-gray-300' : ''
         }`}
       >
-        <li className='hover:cursor-pointer p-5'>
+        <li className='hover:cursor-pointer p-2'>
           <Link
             to='/'
             className='btn-link font-playfair-display font-extrabold text-3xl'
@@ -75,7 +75,7 @@ const Navigation = () => {
             Caffeinated
           </Link>
         </li>
-        <div className='flex space-x-10 p-6 font-playfair-display font-semibold'>
+        <div className='flex space-x-10 p-4 font-playfair-display font-semibold'>
           <li className='hover:cursor-pointer'>
             <Link to='/categories' className='btn-link'>
               <span className=''>Shop</span>

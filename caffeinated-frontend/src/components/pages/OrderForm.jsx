@@ -1,11 +1,11 @@
 import React from 'react'
 import Cart from './Cart'
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateCartUser } from '../../store/slices/cartSlice';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateCartUser } from '../../store/slices/cartSlice'
+import { useNavigate } from 'react-router-dom'
 
-const OrderForm = ({user, setShowOrderForm}) => {
+const OrderForm = ({ user, setShowOrderForm }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
@@ -16,7 +16,7 @@ const OrderForm = ({user, setShowOrderForm}) => {
     city: user.address ? user.address.city || '' : '',
     state: user.address ? user.address.state || '' : '',
     pincode: user.address ? user.address.pincode || '' : '',
-  });
+  })
 
   useEffect(() => {
     setFormData({
@@ -27,110 +27,114 @@ const OrderForm = ({user, setShowOrderForm}) => {
       city: user.address ? user.address.city || '' : '',
       state: user.address ? user.address.state || '' : '',
       pincode: user.address ? user.address.pinCode || '' : '',
-    });
-  }, [user]);
+    })
+  }, [user])
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData({
       ...formData,
       [name]: value,
-    });
-  };
+    })
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
+    e.preventDefault()
+    console.log('Form submitted:', formData)
     await dispatch(updateCartUser(formData))
     setShowOrderForm(false)
-    navigate("/user/cart")
-  };
+    navigate('/user/cart')
+  }
 
   return (
-    <form className="max-w-md mx-auto mt-8 p-4 bg-amber-800 bg-opacity-10 backdrop-filter backdrop-blur-2xl rounded">
-      <label className="block mb-2">
+    <form className='max-w-md mx-auto mt-8 p-4 bg-amber-800 bg-opacity-10 backdrop-filter backdrop-blur-2xl rounded'>
+      <label className='block mb-2'>
         Name:
         <input
-          type="text"
-          name="name"
+          type='text'
+          name='name'
           value={formData.name}
           onChange={handleChange}
-          className="w-full border-b rounded px-3 py-2 mt-1"
+          className='w-full border-b rounded px-3 py-2 mt-1'
         />
       </label>
-      <label className="block mb-2">
+      <label className='block mb-2'>
         Mobile Number:
         <input
-          type="text"
-          name="mobileNumber"
+          type='text'
+          name='mobileNumber'
           value={formData.mobileNumber}
           onChange={handleChange}
-          className="w-full border-b rounded px-3 py-2 mt-1"
+          className='w-full border-b rounded px-3 py-2 mt-1'
         />
       </label>
-      <label className="block mb-2">
+      <label className='block mb-2'>
         Address 1:
         <input
-          type="text"
-          name="address1"
+          type='text'
+          name='address1'
           value={formData.address1}
           onChange={handleChange}
-          className="w-full border-b rounded px-3 py-2 mt-1"
+          className='w-full border-b rounded px-3 py-2 mt-1'
         />
       </label>
-      <label className="block mb-2">
+      <label className='block mb-2'>
         Address 2:
         <input
-          type="text"
-          name="address2"
+          type='text'
+          name='address2'
           value={formData.address2}
           onChange={handleChange}
-          className="w-full border-b rounded px-3 py-2 mt-1"
+          className='w-full border-b rounded px-3 py-2 mt-1'
         />
       </label>
-      <label className="block mb-2">
+      <label className='block mb-2'>
         City:
         <input
-          type="text"
-          name="city"
+          type='text'
+          name='city'
           value={formData.city}
           onChange={handleChange}
-          className="w-full border-b rounded px-3 py-2 mt-1"
+          className='w-full border-b rounded px-3 py-2 mt-1'
         />
       </label>
-      <label className="block mb-2">
+      <label className='block mb-2'>
         State:
         <input
-          type="text"
-          name="state"
+          type='text'
+          name='state'
           value={formData.state}
           onChange={handleChange}
-          className="w-full border-b rounded px-3 py-2 mt-1"
+          className='w-full border-b rounded px-3 py-2 mt-1'
         />
       </label>
-      <label className="block mb-2">
+      <label className='block mb-2'>
         Pincode:
         <input
-          type="text"
-          name="pincode"
+          type='text'
+          name='pincode'
           value={formData.pincode}
           onChange={handleChange}
-          className="w-full border-b rounded px-3 py-2 mt-1"
+          className='w-full border-b rounded px-3 py-2 mt-1'
         />
       </label>
       <div className='flex justify-center'>
-      <button
-        type="submit"
-        className="bg-black text-amber-50 px-4 py-2 rounded hover:bg-slate-900 " 
-        onClick={handleSubmit}
-      >
-        Submit
-      </button>
-      <button onClick={()=>setShowOrderForm(false)} className='bg-black text-amber-50 px-4 py-2 rounded hover:bg-slate-900 ml-4'>Cancel</button>
-   
+        <button
+          type='submit'
+          className='bg-black text-amber-50 px-4 py-2 rounded hover:bg-slate-900 '
+          onClick={handleSubmit}
+        >
+          Submit
+        </button>
+        <button
+          onClick={() => setShowOrderForm(false)}
+          className='bg-black text-amber-50 px-4 py-2 rounded hover:bg-slate-900 ml-4'
+        >
+          Cancel
+        </button>
       </div>
-      </form>
-  );
-};
+    </form>
+  )
+}
 
-export default OrderForm;
+export default OrderForm

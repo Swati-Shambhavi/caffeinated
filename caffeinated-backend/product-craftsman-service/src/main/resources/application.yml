@@ -36,3 +36,8 @@ eureka:
     registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8070/eureka/
+openai:
+  image-generator:
+    host: https://api.openai.com
+    endpoint: /v1/images/generations
+    api-key: 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

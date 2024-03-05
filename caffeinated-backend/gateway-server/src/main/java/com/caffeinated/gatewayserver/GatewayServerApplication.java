@@ -24,8 +24,8 @@ public class GatewayServerApplication {
 						.uri("lb://PRODUCT-CRAFTSMAN-SERVICE"))
 				.route(p -> p
 						.path("/caffeinated/products/**")
-						.filters(f -> f.rewritePath("/caffeinated/(?<segment>.*)", "/${segment}")
-								.circuitBreaker(config -> config.setName("productServiceCircuitBreaker").setFallbackUri("forward:/contactSupportTeam")))
+						.filters(f -> f.rewritePath("/caffeinated/(?<segment>.*)", "/${segment}"))
+//								.circuitBreaker(config -> config.setName("productServiceCircuitBreaker").setFallbackUri("forward:/contactSupportTeam")))
 						.uri("lb://PRODUCT-CRAFTSMAN-SERVICE"))
 				.route(p -> p
 						.path("/caffeinated/carts/**")

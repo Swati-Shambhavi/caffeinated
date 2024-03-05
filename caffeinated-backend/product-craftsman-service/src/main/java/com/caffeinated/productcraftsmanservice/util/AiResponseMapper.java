@@ -30,10 +30,10 @@ public class AiResponseMapper {
             List<String> recipe = extractRecipe(contentNode);
 
             CustomizedProductResponse response = new CustomizedProductResponse();
-            response.setProductName(productName);
-            response.setProductDescription(productDescription);
+            response.setProductName(removeExtraCharacters(productName));
+            response.setProductDescription(removeExtraCharacters(productDescription));
             response.setImageUrl(imageUrl);
-            response.setIngredients(ingredients);
+            response.setIngredients(removeExtraChars(ingredients));
             response.setCaffeineContent(caffeineContent);
             response.setRecipeSteps(recipe);
             return response;
@@ -41,6 +41,14 @@ public class AiResponseMapper {
             e.printStackTrace();
             return new CustomizedProductResponse();
         }
+    }
+
+    private static List<String> removeExtraChars(List<String> ingredients) {
+        return ingredients.stream().map(AiResponseMapper::removeExtraCharacters).collect(Collectors.toList());
+    }
+
+    private static String removeExtraCharacters(String data) {
+        return data.replaceAll("^\\*+|\\*+$", "");
     }
 
     private static String extractField(JsonNode contentNode, String field) {

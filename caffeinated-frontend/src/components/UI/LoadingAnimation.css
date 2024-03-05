@@ -1,0 +1,40 @@
+@keyframes dotAnimation {
+    0% {
+      transform: scale(1);
+    }
+    25% {
+      transform: scale(1.5);
+    }
+    50% {
+      transform: scale(1);
+    }
+    75% {
+      transform: scale(1.5);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  .loading-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #000; /* Adjust color as needed */
+    margin: 0 5px;
+    animation: dotAnimation 1.5s infinite; /* Adjust animation duration as needed */
+  }
+  
+  .dot:nth-child(2) {
+    animation-delay: 0.5s; /* Adjust delay for the second dot */
+  }
+  
+  .dot:nth-child(3) {
+    animation-delay: 1s; /* Adjust delay for the third dot */
+  }

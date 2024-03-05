@@ -66,7 +66,9 @@ public class ProductController {
 
 	@PostMapping("/customize")
 	public ResponseEntity<CustomizedProductResponse> customizeProduct(@RequestBody @Valid ProductCustomizationRequest request) {
+		logRequestInfo("customizeProduct", request);
 		CustomizedProductResponse response = productService.customizeProduct(request);
+		logResponseInfo("customizeProduct", response);
 		return ResponseEntity.ok(response);
 	}
 

@@ -21,6 +21,7 @@ import AdminAuthWrapper from '../utility/AdminAuthWrapper'
 import Categories from '../components/pages/Categories'
 import Products from '../components/pages/Products'
 import OrderDetail from '../components/pages/OrderDetail'
+import CustomizeProduct from '../components/pages/CustomizeProduct'
 
 const CaffeinatedRouter = () => {
   const { initialized, keycloak } = useKeycloak()
@@ -36,6 +37,7 @@ const CaffeinatedRouter = () => {
         { path: '/', element: <Home /> },
         { path: '/categories', element: <Categories style='mt-24' /> },
         { path: '/categories/:categoryId/products', element: <Products /> },
+        { path: '/products/customize', element: <CustomizeProduct /> },
         {
           path: 'admin',
           element: <AdminAuthWrapper />,
